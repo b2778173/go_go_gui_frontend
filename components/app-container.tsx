@@ -7,7 +7,7 @@ function AppContainer(props) {
       <Head>
         <title>股咕雞</title>
       </Head>
-       <main>{props.children}</main>
+      <main>{props.children}</main>
     </div>
   )
 }

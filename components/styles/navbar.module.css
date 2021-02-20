@@ -1,0 +1,9 @@
+.avatar {
+  /* display: inline-flex;
+  float: righ; */
+  margin: 5px;
+}
+.noUnderline:hover {
+  border-bottom: 2px solid transparent !important;
+  color: inherit !important;
+}
