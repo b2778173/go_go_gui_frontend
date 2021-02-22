@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Chart from '../components/chart'
+import TickerTape from '../components/tickerTape'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
@@ -50,7 +51,7 @@ export default function Home() {
           </a>
         </div>
         {/* Chart */}
-        <Chart symbols="NASDAQ:AAPL"></Chart>
+        {/* <Chart symbols="NASDAQ:AAPL"></Chart> */}
       </main>
 
       <footer className={styles.footer}>

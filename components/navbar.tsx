@@ -10,8 +10,9 @@ import { UserOutlined, DownOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 import styles from './styles/navbar.module.css'
 import { Input } from 'antd'
+import TickerTape from './tickerTape'
 
-function NavBar(props: any) {
+function NavBar(props: { current: string; showTickerTap: boolean }) {
   const [current, changeCurrent] = useState('mail')
 
   // component
@@ -125,6 +126,7 @@ function NavBar(props: any) {
           </Dropdown>
         </Menu.Item>
       </Menu>
+      <TickerTape></TickerTape>
     </Fragment>
   )
 }
