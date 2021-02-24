@@ -1,9 +1,12 @@
-import styles from './styles/layout.module.css'
+import React, { ReactNode } from "react"
+import styles from "./styles/layout.module.css"
 
-function Layout(props) {
+function Layout(props: { children: ReactNode }) {
+  const { children } = props
+
   return (
     <div className={styles.container}>
-       <main>{props.children}</main>
+      <main>{children}</main>
     </div>
   )
 }

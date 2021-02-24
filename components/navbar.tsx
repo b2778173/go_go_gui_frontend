@@ -1,24 +1,26 @@
-import { Menu, Dropdown, Select } from 'antd'
+import { Menu, Dropdown, Avatar, Input } from "antd"
 import {
   MailOutlined,
   AppstoreOutlined,
-  SettingOutlined
-} from '@ant-design/icons'
-import { Fragment, useState } from 'react'
-import { Avatar } from 'antd'
-import { UserOutlined, DownOutlined } from '@ant-design/icons'
-import Link from 'next/link'
-import styles from './styles/navbar.module.css'
-import { Input } from 'antd'
-import TickerTape from './tickerTape'
+  SettingOutlined,
+  UserOutlined,
+  DownOutlined
+} from "@ant-design/icons"
+import React, { useState } from "react"
 
-function NavBar(props: { current: string; showTickerTap: boolean }) {
-  const [current, changeCurrent] = useState('mail')
+import Link from "next/link"
+import styles from "./styles/navbar.module.css"
+
+import TickerTape from "./tickerTape"
+
+function NavBar(props: { showTickerTap: boolean }) {
+  const { showTickerTap } = props
+  const [current, changeCurrent] = useState("mail")
 
   // component
   const { SubMenu } = Menu
   const { Search } = Input
-  const { Option } = Select
+  // const { Option } = Select
 
   const avatarMenu = (
     <Menu>
@@ -34,8 +36,7 @@ function NavBar(props: { current: string; showTickerTap: boolean }) {
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href="http://www.tmall.com/"
-        >
+          href="http://www.tmall.com/">
           3rd menu item
         </a>
       </Menu.Item>
@@ -45,26 +46,21 @@ function NavBar(props: { current: string; showTickerTap: boolean }) {
 
   //   component css
   const styleAvatar = {
-    display: 'inline-flex',
-    float: 'right'
+    display: "inline-flex",
+    float: "right"
   }
   // handler
   const handleClick = (e: any) => {
     console.log(e)
     changeCurrent(e.key)
-    console.log('The link was clicked.')
   }
   const onSearch = (value: string) => {
     console.log(value)
   }
 
   return (
-    <Fragment>
-      <Menu
-        onClick={handleClick}
-        selectedKeys={[props.current]}
-        mode="horizontal"
-      >
+    <>
+      <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
         <Menu.Item key="mail" icon={<MailOutlined />}>
           Navigation One
         </Menu.Item>
@@ -74,8 +70,7 @@ function NavBar(props: { current: string; showTickerTap: boolean }) {
         <SubMenu
           key="SubMenu"
           icon={<SettingOutlined />}
-          title="Navigation Three - Submenu"
-        >
+          title="Navigation Three - Submenu">
           <Menu.ItemGroup title="Item 1">
             <Menu.Item key="setting:1">Option 1</Menu.Item>
             <Menu.Item key="setting:2">Option 2</Menu.Item>
@@ -89,8 +84,7 @@ function NavBar(props: { current: string; showTickerTap: boolean }) {
           <a
             href="https://ant.design"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             Navigation Four - Link
           </a>
         </Menu.Item>
@@ -103,17 +97,18 @@ function NavBar(props: { current: string; showTickerTap: boolean }) {
           <Search
             placeholder="input search text"
             onSearch={onSearch}
-            style={{ width: 200, verticalAlign: 'middle' }}
+            style={{ width: 200, verticalAlign: "middle" }}
           />
           {/* </Input.Group> */}
         </Menu.Item>
         <Menu.Item className={styles.noUnderline}>
-          <Dropdown overlay={avatarMenu} trigger={['click']}>
+          <Dropdown overlay={avatarMenu} trigger={["click"]}>
             <div style={styleAvatar as any}>
-              <a
+              <button
+                role="menuitem"
+                type="button"
                 className="ant-dropdown-link"
-                onClick={(e) => e.preventDefault()}
-              >
+                onClick={(e: any) => e.preventDefault()}>
                 <Avatar
                   shape="square"
                   size="large"
@@ -121,13 +116,13 @@ function NavBar(props: { current: string; showTickerTap: boolean }) {
                   className={styles.avatar}
                 />
                 name <DownOutlined />
-              </a>
+              </button>
             </div>
           </Dropdown>
         </Menu.Item>
       </Menu>
-      <TickerTape></TickerTape>
-    </Fragment>
+      {showTickerTap && <TickerTape />}
+    </>
   )
 }
 

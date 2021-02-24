@@ -1,18 +1,19 @@
-import '../styles/globals.css'
-import 'antd/dist/antd.css'
-import { AppProps } from 'next/app'
-import AppContainer from '../components/app-container'
-import NavBar from '../components/navbar'
-import { Fragment } from 'react'
+/* eslint-disable react/jsx-props-no-spreading */
+import "../styles/globals.css"
+import "antd/dist/antd.css"
+import { AppProps } from "next/app"
+import React from "react"
+import AppContainer from "../components/app-container"
+import NavBar from "../components/navbar"
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <Fragment>
-      <NavBar></NavBar>
+    <>
+      <NavBar />
       <AppContainer>
         <Component {...pageProps} />
       </AppContainer>
-    </Fragment>
+    </>
   )
 }
 

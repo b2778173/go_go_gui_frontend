@@ -1,0 +1,42 @@
+{
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb-typescript",
+    "airbnb-typescript-prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 11,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    // disable the rule for all files
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "no-template-curly-in-string": "off",
+    "@typescript-eslint/no-explicit-any": "off"
+  },
+  "overrides": [
+    {
+      // enable the rule specifically for TypeScript files
+      "files": ["*.js", "*.ts"],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "warn"
+      }
+    }
+  ]
+}
