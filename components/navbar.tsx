@@ -104,9 +104,9 @@ function NavBar(props: { showTickerTap: boolean }) {
         <Menu.Item className={styles.noUnderline}>
           <Dropdown overlay={avatarMenu} trigger={["click"]}>
             <div style={styleAvatar as any}>
-              <button
+              <a
                 role="menuitem"
-                type="button"
+                tabIndex={0}
                 className="ant-dropdown-link"
                 onClick={(e: any) => e.preventDefault()}>
                 <Avatar
@@ -116,7 +116,7 @@ function NavBar(props: { showTickerTap: boolean }) {
                   className={styles.avatar}
                 />
                 name <DownOutlined />
-              </button>
+              </a>
             </div>
           </Dropdown>
         </Menu.Item>

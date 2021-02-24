@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import TradingViewWidget, { Themes } from "react-tradingview-widget"
 import React from "react"
 

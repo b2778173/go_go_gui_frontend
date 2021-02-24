@@ -29,7 +29,8 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "no-template-curly-in-string": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "jsx-a11y/click-events-have-key-events": "off"
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/anchor-is-valid": "off"
   },
   "overrides": [
     {
