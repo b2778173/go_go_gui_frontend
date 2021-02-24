@@ -8,7 +8,7 @@ function Chart(props: any) {
       symbol={symbols}
       theme={Themes.LIGHT}
       locale="en"
-      autosize
+      // autosize
     />
   )
 }

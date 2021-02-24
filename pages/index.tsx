@@ -1,6 +1,5 @@
 import Head from "next/head"
 import React from "react"
-import Chart from "../components/chart"
 import styles from "../styles/Home.module.css"
 
 export default function Home() {
@@ -48,8 +47,6 @@ export default function Home() {
             </p>
           </a>
         </div>
-        {/* Chart */}
-        <Chart symbols="NASDAQ:AAPL" />
       </main>
 
       <footer className={styles.footer}>

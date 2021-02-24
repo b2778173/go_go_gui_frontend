@@ -25,9 +25,7 @@ function NavBar(props: { showTickerTap: boolean }) {
   const avatarMenu = (
     <Menu>
       <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="/">
-          1st menu item
-        </a>
+        <Link href="/">Home</Link>
       </Menu.Item>
       <Menu.Item>
         <Link href="/profile">Profile</Link>
