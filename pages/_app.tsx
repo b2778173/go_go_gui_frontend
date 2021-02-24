@@ -9,7 +9,7 @@ import NavBar from "../components/navbar"
 function App({ Component, pageProps }: AppProps) {
   return (
     <>
-      <NavBar />
+      <NavBar showTickerTap />
       <AppContainer>
         <Component {...pageProps} />
       </AppContainer>

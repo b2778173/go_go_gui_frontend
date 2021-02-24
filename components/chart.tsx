@@ -1,9 +1,12 @@
-import TradingViewWidget, { Themes } from 'react-tradingview-widget'
+// eslint-disable-next-line import/no-unresolved
+import TradingViewWidget, { Themes } from "react-tradingview-widget"
+import React from "react"
 
 function Chart(props: any) {
+  const { symbols } = props
   return (
     <TradingViewWidget
-      symbol={props.symbols}
+      symbol={symbols}
       theme={Themes.LIGHT}
       locale="en"
       autosize
