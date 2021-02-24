@@ -1,25 +1,22 @@
-import { Menu } from 'antd'
+import { Menu } from "antd"
 import {
   MailOutlined,
   AppstoreOutlined,
   SettingOutlined
-} from '@ant-design/icons'
-import { useState } from 'react'
+} from "@ant-design/icons"
+import React, { useState } from "react"
+
 const { SubMenu } = Menu
 
-function NavBar(props: any) {
-  const handleClick = (e: any) => {
-    const [current, changeCurrent] = useState('mail')
-    console.log(e)
+function NavBar() {
+  const [current, changeCurrent] = useState("mail")
+  const handleClick: any = (e: any) => {
+    // console.log("click ", e)
     changeCurrent(e.key)
-    console.log('The link was clicked.')
   }
+
   return (
-    <Menu
-      onClick={handleClick}
-      selectedKeys={[props.current]}
-      mode="horizontal"
-    >
+    <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
       <Menu.Item key="mail" icon={<MailOutlined />}>
         Navigation One
       </Menu.Item>
@@ -29,8 +26,7 @@ function NavBar(props: any) {
       <SubMenu
         key="SubMenu"
         icon={<SettingOutlined />}
-        title="Navigation Three - Submenu"
-      >
+        title="Navigation Three - Submenu">
         <Menu.ItemGroup title="Item 1">
           <Menu.Item key="setting:1">Option 1</Menu.Item>
           <Menu.Item key="setting:2">Option 2</Menu.Item>

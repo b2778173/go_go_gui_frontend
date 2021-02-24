@@ -1,8 +1,8 @@
 import Head from "next/head"
-import React from "react"
+import React, { ReactNode } from "react"
 import styles from "./styles/app-container.module.css"
 
-function AppContainer(props: any) {
+function AppContainer(props: { children: ReactNode }) {
   const { children } = props
   return (
     <div className={styles.container}>
