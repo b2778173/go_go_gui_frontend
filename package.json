@@ -8,7 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@antv/data-set": "^0.11.8",
     "antd": "^4.12.3",
+    "bizcharts": "^4.1.7",
     "next": "10.0.7",
     "react": "17.0.1",
     "react-dom": "17.0.1"
