@@ -1,13 +1,15 @@
-import Head from 'next/head'
-import styles from './styles/app-container.module.css'
+import Head from "next/head"
+import React from "react"
+import styles from "./styles/app-container.module.css"
 
-function AppContainer(props) {
+function AppContainer(props: any) {
+  const { children } = props
   return (
     <div className={styles.container}>
       <Head>
         <title>股咕雞</title>
       </Head>
-       <main>{props.children}</main>
+      <main>{children}</main>
     </div>
   )
 }
