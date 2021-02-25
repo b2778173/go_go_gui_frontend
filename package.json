@@ -17,6 +17,7 @@
         "eslint-config-airbnb-typescript-prettier": "^4.1.0",
         "@antv/data-set": "^0.11.8",
         "bizcharts": "^4.1.7",
+        "eslint-plugin-react-hooks": "^4.2.0",
         "next": "10.0.7",
         "prettier": "^2.2.1",
         "react": "17.0.1",
