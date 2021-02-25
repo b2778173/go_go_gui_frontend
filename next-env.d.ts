@@ -1,3 +1,3 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
-declare module "react-tradingview-widget"
+declare module "nprogress"
