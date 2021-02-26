@@ -1,8 +1,60 @@
 import Head from "next/head"
-import React from "react"
+import React, { useState } from "react"
+import { Card, Skeleton, Table, Row, Col } from "antd"
 import styles from "../styles/Home.module.css"
+import Footer from "../components/footer"
+import Chart from "../components/chart"
 
 export default function Home() {
+  const [noTitleKey, setKey] = useState("app")
+  const [loading, setLoading] = useState(false)
+  const [data] = useState([])
+  const tabListNoTitle = [
+    {
+      key: "Feed",
+      tab: "News Feed"
+    },
+    {
+      key: "News",
+      tab: "Your News"
+    }
+    // {
+    //   key: "Post",
+    //   tab: "Post"
+    // }
+  ]
+  const contentListNoTitle: any = {
+    Feed: <p>Feed content</p>,
+    News: <p>News content</p>,
+    Post: <p>Post content</p>
+  }
+  const columns = [
+    {
+      title: "Symbol",
+      dataIndex: "symbol",
+      key: "symbol",
+      render: (text: string) => <a>{text}</a>
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      key: "age"
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address"
+    }
+  ]
+
+  const onTabChange = (key: any) => {
+    console.log(key)
+    setLoading(true)
+    setKey(key)
+    setTimeout(() => {
+      setLoading(false)
+    }, 2000)
+  }
   return (
     <div className={styles.container}>
       <Head>
@@ -11,53 +63,45 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{" "}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}>
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}>
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <>
+          <div className={styles.content}>
+            <Row>
+              <Col span={8}>
+                <Chart />
+              </Col>
+              <Col span={8}>
+                <Chart />
+              </Col>
+              <Col span={8}>
+                <Chart />
+              </Col>
+            </Row>
+            <Row>
+              <Col span={16}>
+                {" "}
+                <Card
+                  style={{ maxWidth: "90%", minWidth: "200px" }}
+                  tabList={tabListNoTitle}
+                  activeTabKey={noTitleKey}
+                  // tabBarExtraContent={<a href="#">More</a>}
+                  onTabChange={(key) => {
+                    onTabChange(key)
+                  }}>
+                  <Skeleton loading={loading} avatar active>
+                    {contentListNoTitle[noTitleKey]}
+                  </Skeleton>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card bodyStyle={{ padding: 0 }}>
+                  <Table columns={columns} dataSource={data} />
+                </Card>
+              </Col>
+            </Row>
+          </div>
+        </>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer">
-          Powered by{" "}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+      <Footer />
     </div>
   )
 }
