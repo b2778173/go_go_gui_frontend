@@ -71,56 +71,50 @@ class ProfileImg extends React.Component<any, any>{
 
 
         return (
-
-
                 <>
                     <Row>
                         <Col span={4}/>
                         <Col span={20}>
                             <Tabs defaultActiveKey="1">
                                 <TabPane tab="General" key="1">
-                                    <Row>
-                                        <Space direction="vertical">
-                                            <div>
-                                                <Avatar src={picture.large} size={120} icon={<UserOutlined />} />
-                                            </div>
-                                            <Button>Upload Photo</Button>
-                                        </Space>
-                                    </Row>
+                                    <Space direction="vertical">
+                                        <div>
+                                            <Avatar src={picture.large} size={120} icon={<UserOutlined />} />
+                                        </div>
+                                        <Button>Upload Photo</Button>
+                                    </Space>
                                     <Divider orientation="left" plain><Title level={5}>Personal Info</Title></Divider>
-                                    <Row>
-                                        <Space direction="vertical">
-                                            <div>
-                                                <Row><Title level={5}><Text type="secondary">Name</Text></Title></Row>
-                                                <Row>
-                                                    {name.first} {name.last}
-                                                </Row>
-                                            </div>
-                                            <div>
-                                                <Row><Title level={5}><Text type="secondary">Email</Text></Title></Row>
-                                                <Row>
-                                                    <Paragraph editable={{ onChange: email => {this.setState({email:email})} }}>{email}</Paragraph>
-                                                </Row>
-                                            </div>
-                                            <div>
-                                                <Row><Title level={5}><Text type="secondary">Location</Text></Title></Row>
-                                                {/*<Row><Text type="secondary">street</Text></Row>*/}
-                                                {/*<Row>{location.street}</Row>*/}
+                                    <Space direction="vertical">
+                                        <div>
+                                            <Title level={5}><Text type="secondary">Name</Text></Title>
+                                                {name.first} {name.last}
+                                        </div>
+                                        <div>
+                                            <Title level={5}><Text type="secondary">Email</Text></Title>
+                                            <Space size={13}>
+                                                <Paragraph>    </Paragraph>
+                                                <Paragraph editable={{onChange: email => {this.setState({email:email})} }}>{email}</Paragraph>                                            </Space>
+                                        </div>
+                                        <div>
+                                            <Title level={5}><Text type="secondary">Location</Text></Title>
+                                            {/*<Row><Text type="secondary">street</Text></Row>*/}
+                                            {/*<Row>{location.street}</Row>*/}
+                                            <Row><Text type="secondary">city</Text></Row>
+                                            <Row>{location.city}</Row>
 
-                                                <Row><Text type="secondary">city</Text></Row>
-                                                <Row>{location.city}</Row>
+                                            <Row><Text type="secondary">country</Text></Row>
+                                            <Row>{location.country}</Row>
 
-                                                <Row><Text type="secondary">country</Text></Row>
-                                                <Row>{location.country}</Row>
+                                            <Row><Text type="secondary">state</Text></Row>
+                                            <Row>{location.state}</Row>
 
-                                                <Row><Text type="secondary">state</Text></Row>
-                                                <Row>{location.state}</Row>
-
-                                                <Row><Text type="secondary">postcode</Text></Row>
-                                                <Row>{location.postcode}</Row>
-                                            </div>
-                                        </Space>
-                                    </Row>
+                                            <Row><Text type="secondary">postcode</Text></Row>
+                                            <Row>{location.postcode}</Row>
+                                        </div>
+                                        <div>
+                                            <Button type="primary">Save Change</Button>
+                                        </div>
+                                    </Space>
                                 </TabPane>
                                 <TabPane tab="Password" key="2">
                                     Content of Tab Pane 2
