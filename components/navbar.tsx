@@ -31,6 +31,9 @@ function NavBar(props: { showTickerTap: boolean }) {
         <Link href="/profile">Profile</Link>
       </Menu.Item>
       <Menu.Item>
+        <Link href="/user/userinfo">會員中心</Link>
+      </Menu.Item>
+      <Menu.Item>
         <a
           target="_blank"
           rel="noopener noreferrer"
