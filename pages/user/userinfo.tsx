@@ -1,15 +1,8 @@
-import React, {useState} from 'react';
-// import './index.css';
+import React from 'react';
 import { Typography, Image, Row, Col, Avatar, Button, Space, Divider, List, Skeleton, Tabs } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 const { Text, Title, Paragraph } = Typography;
 
-import { UserOutlined } from '@ant-design/icons';
-import {useRouter} from "next/router";
-import App from '../_app';
-import {use} from "ast-types";
-
-
-const count = 3;
 const fakeDataUrl = `https://randomuser.me/api/`;
 const { TabPane } = Tabs;
 
