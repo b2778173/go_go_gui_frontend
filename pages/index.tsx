@@ -3,7 +3,7 @@ import React, { useState } from "react"
 import { Card, Skeleton, Table, Row, Col } from "antd"
 import styles from "../styles/Home.module.css"
 import Footer from "../components/footer"
-import Chart from "../components/chart"
+import Chart from "../components/chart/chart"
 
 export default function Home() {
   const [noTitleKey, setKey] = useState("app")
