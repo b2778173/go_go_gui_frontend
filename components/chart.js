@@ -9,31 +9,50 @@ import {
   Interval,
 } from 'bizcharts';
 import DataSet from '@antv/data-set';
+import axios from 'axios';
 
 
- function Demo() {
+ function Charts() {
    const [data, setData] = useState();
+
+   function initBidData() {
+    const url = 'https://finnhub.io/api/v1/stock/candle?symbol=AAPL&resolution=D&from=1612108800&to=1612540800&token=c07nu3v48v6retjanc0g&fbclid=IwAR2zi1pkFhR881g63nv8tP36qkBW02EkiNM3-q6YxUV0TFTJk5agCCz99Gw'
+
+    axios.get(url)
+    .then(function (response) {
+      const data1 = response.data
+      setData(data1)     
+      console.log('data1',data1) 
+      console.log('data',data) 
+    })
+    .catch((error) => { console.error(error) })
+   }
    useEffect(() => {
-     fetch('https://alifd.alibabausercontent.com/materials/@bizcharts/candlestick-basic/0.3.2/mock.json')
-       .then(res => res.json())
-       .then(data => {
-          const ds = new DataSet();
-          const dv = ds.createView();
-          dv.source(data)
-            .transform({
-              type: 'map',
-              callback: obj => {
-                obj.trend = (obj.start <= obj.end) ? '上涨' : '下跌';
-                obj.range = [obj.start, obj.end, obj.max, obj.min];
-                return obj;
-              }
-            });
-           console.log(dv)
-           setData(dv.rows);
-       })
+    initBidData() 
+
+    //  fetch('https://alifd.alibabausercontent.com/materials/@bizcharts/candlestick-basic/0.3.2/mock.json')
+    //    .then(res => res.json())
+    //    .then(data => {
+    //       const ds = new DataSet();
+    //       const dv = ds.createView();
+    //       console.log('dv1',dv)
+    //       dv.source(data)
+    //         .transform({
+    //           type: 'map',
+    //           callback: obj => {
+    //             obj.trend = (obj.start <= obj.end) ? '上涨' : '下跌';
+    //             obj.range = [obj.start, obj.end, obj.max, obj.min];
+    //             return obj;
+    //           }
+    //         });
+    //        console.log(dv)
+    //        setData(dv.rows);
+    //    })
    }, [])
    
-   return <Chart
+   return (
+   <>
+   <Chart
      height={400}
      padding={[10, 40, 40, 40]}
      data={data}
@@ -45,12 +64,12 @@ import DataSet from '@antv/data-set';
         tickCount: 4,
         },
         
-        volumn: { alias: '成交量' },
-        start: { alias: '开盘价' },
-        end: { alias: '收盘价' },
-        max: { alias: '最高价' },
-        min: { alias: '最低价' },
-        range: { alias: '股票价格' }
+        v: { alias: '成交量' },
+        o: { alias: '开盘价' },
+        c: { alias: '收盘价' },
+        h: { alias: '最高价' },
+        l: { alias: '最低价' },
+        t: { alias: '成交時間' }
      }}
    >
      <Tooltip
@@ -82,14 +101,14 @@ import DataSet from '@antv/data-set';
           }
         ]}
         tooltip={[
-        'time*start*end*max*min',
-        (time, start, end, max, min) => {
+        't*o*c*h*l',
+        (t, o, c, h, l) => {
           return {
-            name: time,
-            value: '<br><span style="padding-left: 16px">开盘价：' + start + '</span><br/>'
-              + '<span style="padding-left: 16px">收盘价：' + end + '</span><br/>'
-              + '<span style="padding-left: 16px">最高价：' + max + '</span><br/>'
-              + '<span style="padding-left: 16px">最低价：' + min + '</span>'
+            name: t,
+            value: '<br><span style="padding-left: 16px">开盘价：' + o + '</span><br/>'
+              + '<span style="padding-left: 16px">收盘价：' + c + '</span><br/>'
+              + '<span style="padding-left: 16px">最高价：' + h + '</span><br/>'
+              + '<span style="padding-left: 16px">最低价：' + l + '</span>'
           }}
         ]}
       />
@@ -125,15 +144,17 @@ import DataSet from '@antv/data-set';
           return '#2fc25b';
         }
       }]}
-      tooltip={['time*volumn', (time, volumn) => {
+      tooltip={['time*volumn', (t, v) => {
         return {
-          name: time,
-          value: '<br/><span style="padding-left: 16px">成交量：' + volumn + '</span><br/>'
+          name: t,
+          value: '<br/><span style="padding-left: 16px">成交量：' + v + '</span><br/>'
         };
       }]}
     />
     </View>
   </Chart>
+  </>
+  )
  }
  
- export default Demo
+ export default Charts
