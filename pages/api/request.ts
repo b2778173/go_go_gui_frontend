@@ -5,7 +5,7 @@ import { message } from "antd"
 
 // const accessToken = Cookies.get("Authorization")
 const request = axios.create({
-  baseURL: "localhost:5000",
+  baseURL: "http://localhost:5000",
   headers: {
     "Content-Type": "application/json"
   }
