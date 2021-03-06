@@ -1,14 +1,27 @@
 import Head from "next/head"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Card, Skeleton, Table, Row, Col } from "antd"
 import styles from "../styles/Home.module.css"
 import Footer from "../components/footer"
-import Chart from "../components/chart/chart"
+// import Chart from "../components/chart/chart"
+import AreaChart from "../components/chart/areaChart"
+import getData from "./api/test"
+import { generalNews } from "./api/news"
 
-export default function Home() {
+function Home() {
   const [noTitleKey, setKey] = useState("app")
   const [loading, setLoading] = useState(false)
-  const [data] = useState([])
+  const [data, setData]: [any, any] = useState(null)
+  // second arugs is empty , the useEffect just run once --> componentDidMounted
+  useEffect(() => {
+    async function fetchData() {
+      const ChartResponse = await getData()
+      setData(ChartResponse)
+      const response = await generalNews("general")
+      console.log(response)
+    }
+    fetchData()
+  }, [])
   const tabListNoTitle = [
     {
       key: "Feed",
@@ -46,6 +59,7 @@ export default function Home() {
       key: "address"
     }
   ]
+  //
 
   const onTabChange = (key: any) => {
     console.log(key)
@@ -67,13 +81,37 @@ export default function Home() {
           <div className={styles.content}>
             <Row>
               <Col span={8}>
-                <Chart />
+                {data && (
+                  <AreaChart
+                    data={data}
+                    type="svg"
+                    width={500}
+                    height={200}
+                    ratio={1}
+                  />
+                )}
               </Col>
               <Col span={8}>
-                <Chart />
+                {data && (
+                  <AreaChart
+                    data={data}
+                    type="svg"
+                    width={500}
+                    height={200}
+                    ratio={1}
+                  />
+                )}
               </Col>
               <Col span={8}>
-                <Chart />
+                {data && (
+                  <AreaChart
+                    data={data}
+                    type="svg"
+                    width={500}
+                    height={200}
+                    ratio={1}
+                  />
+                )}
               </Col>
             </Row>
             <Row>
@@ -105,3 +143,10 @@ export default function Home() {
     </div>
   )
 }
+
+export default Home
+
+// Home.getInitialProps = async () => {
+//   const response = await getData()
+//   return { data: response }
+// }
