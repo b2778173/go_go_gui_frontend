@@ -34,6 +34,7 @@ function Home() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
+      // fetch data
       const dowResponse = await getAreaChartData(
         "DJI",
         "D",
@@ -56,7 +57,7 @@ function Home() {
       setDow(dowResponse)
       setSP(spResponse)
       setNasdaq(ndxResponse)
-
+      // fetch feed news
       const response = await generalNews("general")
       setFeedNews(response)
       setLoading(false)
