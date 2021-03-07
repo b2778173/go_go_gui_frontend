@@ -5,7 +5,7 @@ import { message } from "antd"
 
 // const accessToken = Cookies.get("Authorization")
 const request = axios.create({
-  baseURL: "localhost:5000",
+  baseURL: "http://localhost:5000",
   headers: {
     "Content-Type": "application/json"
   }
@@ -27,7 +27,6 @@ request.interceptors.response.use(
   (response: any) => {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
-    message.success("This is a success message", 3)
     return response.data
   },
   (error: any) => {

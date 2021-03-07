@@ -114,3 +114,17 @@
         flex-direction: column;
     }
 }
+
+.newImg {
+    width: 150px;
+    height: 100px;
+}
+
+.ant-card-body {
+    padding: 0;
+}
+
+.resolutionBtn {
+    display: flex;
+    justify-content: center;
+}

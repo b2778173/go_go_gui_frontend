@@ -1,24 +1,65 @@
 import Head from "next/head"
 import React, { useState, useEffect } from "react"
-import { Card, Skeleton, Table, Row, Col } from "antd"
+import { Card, Skeleton, Table, Row, Col, Radio } from "antd"
+import { ColumnsType } from "antd/es/table"
 import styles from "../styles/Home.module.css"
 import Footer from "../components/footer"
 // import Chart from "../components/chart/chart"
 import AreaChart from "../components/chart/areaChart"
-import getData from "./api/test"
+// import getData from "./api/test"
 import { generalNews } from "./api/news"
+import getAreaChartData from "./api/chart"
 
 function Home() {
-  const [noTitleKey, setKey] = useState("app")
+  const [noTitleKey, setKey] = useState("Feed")
   const [loading, setLoading] = useState(false)
-  const [data, setData]: [any, any] = useState(null)
+  const [dowData, setDow]: [any, any] = useState(null)
+  const [spData, setSP]: [any, any] = useState(null)
+  const [nasdaqData, setNasdaq]: [any, any] = useState(null)
+  const [feedNews, setFeedNews]: [any[], any] = useState([])
+  // const [news, setNews]: [any, any] = useState(null)
+  const [rankData]: [any, any] = useState(null)
   // second arugs is empty , the useEffect just run once --> componentDidMounted
+
+  const today = () => {
+    return Math.round(new Date().getTime() / 1000)
+  }
+
+  const oneYearBefore = () => {
+    const Y = new Date().getFullYear()
+    const M = new Date().getMonth()
+    const D = new Date().getDate()
+    return Math.round(new Date(Y - 1, M, D).getTime() / 1000)
+  }
   useEffect(() => {
     async function fetchData() {
-      const ChartResponse = await getData()
-      setData(ChartResponse)
+      setLoading(true)
+      const dowResponse = await getAreaChartData(
+        "DJI",
+        "D",
+        oneYearBefore(),
+        today()
+      )
+      const spResponse = await getAreaChartData(
+        "DJI",
+        "D",
+        oneYearBefore(),
+        today()
+      )
+      const ndxResponse = await getAreaChartData(
+        "NDX",
+        "D",
+        oneYearBefore(),
+        today()
+      )
+      // const dowResponse = await getData()
+      setDow(dowResponse)
+      setSP(spResponse)
+      setNasdaq(ndxResponse)
+
       const response = await generalNews("general")
-      console.log(response)
+      setFeedNews(response)
+      setLoading(false)
     }
     fetchData()
   }, [])
@@ -31,15 +72,47 @@ function Home() {
       key: "News",
       tab: "Your News"
     }
-    // {
-    //   key: "Post",
-    //   tab: "Post"
-    // }
+  ]
+  const feedColumns: ColumnsType<any> = [
+    { title: "datetime", dataIndex: "datetime", key: "datetime" },
+    {
+      title: "headline",
+      dataIndex: "headline",
+      key: "headline",
+      render: (headline: string, record: any) => {
+        return (
+          <a href={record.url} target="_blank" rel="noreferrer noopener">
+            {headline}
+          </a>
+        )
+      }
+    },
+    {
+      title: "",
+      dataIndex: "image",
+      key: "image",
+      render: (image: string) => (
+        <img src={image} alt="" className={styles.newImg} />
+      )
+    }
   ]
   const contentListNoTitle: any = {
-    Feed: <p>Feed content</p>,
-    News: <p>News content</p>,
-    Post: <p>Post content</p>
+    Feed: (
+      <p>
+        <Table
+          columns={feedColumns}
+          // expandable={{
+          //   expandedRowRender: (record: any) => (
+          //     <p style={{ margin: 0 }}>{record.summary}</p>
+          //   ),
+          //   rowExpandable: (record: any) => record.name !== "Not Expandable"
+          // }}
+          dataSource={feedNews}
+          pagination={{ pageSize: 5 }}
+        />
+      </p>
+    ),
+    News: <p>News content</p>
   }
   const columns = [
     {
@@ -69,6 +142,10 @@ function Home() {
       setLoading(false)
     }, 2000)
   }
+  const handleSizeChange = (e: any) => {
+    // this.setState({ size: e.target.value });
+    console.log(e)
+  }
   return (
     <div className={styles.container}>
       <Head>
@@ -79,41 +156,70 @@ function Home() {
       <main className={styles.main}>
         <>
           <div className={styles.content}>
+            {/* area chart */}
             <Row>
               <Col span={8}>
-                {data && (
-                  <AreaChart
-                    data={data}
-                    type="svg"
-                    width={500}
-                    height={200}
-                    ratio={1}
-                  />
+                {dowData && (
+                  <div style={{ margin: "10px" }}>
+                    <AreaChart
+                      data={dowData}
+                      type="svg"
+                      width={400}
+                      height={200}
+                      ratio={1}
+                    />
+                    <Radio.Group
+                      onChange={handleSizeChange}
+                      className={styles.resolutionBtn}>
+                      <Radio.Button value="D">D</Radio.Button>
+                      <Radio.Button value="5D">5D</Radio.Button>
+                      <Radio.Button value="M">M</Radio.Button>
+                    </Radio.Group>
+                  </div>
                 )}
               </Col>
               <Col span={8}>
-                {data && (
-                  <AreaChart
-                    data={data}
-                    type="svg"
-                    width={500}
-                    height={200}
-                    ratio={1}
-                  />
+                {spData && (
+                  <div>
+                    <AreaChart
+                      data={spData}
+                      type="svg"
+                      width={400}
+                      height={200}
+                      ratio={1}
+                    />
+                    <Radio.Group
+                      onChange={handleSizeChange}
+                      className={styles.resolutionBtn}>
+                      <Radio.Button value="D">D</Radio.Button>
+                      <Radio.Button value="5D">5D</Radio.Button>
+                      <Radio.Button value="M">M</Radio.Button>
+                    </Radio.Group>
+                  </div>
                 )}
               </Col>
               <Col span={8}>
-                {data && (
-                  <AreaChart
-                    data={data}
-                    type="svg"
-                    width={500}
-                    height={200}
-                    ratio={1}
-                  />
+                {nasdaqData && (
+                  <div>
+                    <AreaChart
+                      data={nasdaqData}
+                      type="hybrid"
+                      width={400}
+                      height={200}
+                      ratio={1}
+                    />
+                    <Radio.Group
+                      onChange={handleSizeChange}
+                      className={styles.resolutionBtn}>
+                      <Radio.Button value="D">D</Radio.Button>
+                      <Radio.Button value="5D">5D</Radio.Button>
+                      <Radio.Button value="M">M</Radio.Button>
+                    </Radio.Group>
+                  </div>
                 )}
               </Col>
             </Row>
+            {/* news */}
             <Row>
               <Col span={16}>
                 {" "}
@@ -130,9 +236,10 @@ function Home() {
                   </Skeleton>
                 </Card>
               </Col>
+              {/* popluar ranking */}
               <Col span={8}>
                 <Card bodyStyle={{ padding: 0 }}>
-                  <Table columns={columns} dataSource={data} />
+                  <Table columns={columns} dataSource={rankData} />
                 </Card>
               </Col>
             </Row>

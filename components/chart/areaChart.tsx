@@ -33,8 +33,11 @@ function AreaChart(props: {
       data={data}
       type={type}
       xAccessor={(d: any) => d.date}
+      displayXAccessor={(d: any) => d.date}
       xScale={scaleTime()}
-      xExtents={[new Date(2011, 0, 1), new Date(2013, 0, 2)]}>
+      zoomEvent={false}
+      // xExtents={[new Date(1614590862), new Date(1614936462)]}
+    >
       <Chart id={0} yExtents={(d: any) => d.close}>
         <defs>
           <linearGradient id="MyGradient" x1="0" y1="100%" x2="0" y2="0%">
