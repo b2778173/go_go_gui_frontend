@@ -15,39 +15,20 @@ import axios from 'axios';
  function Charts() {
    const [data, setData] = useState();
 
-   function initBidData() {
+   function initData() {
     const url = 'https://finnhub.io/api/v1/stock/candle?symbol=AAPL&resolution=D&from=1612108800&to=1612540800&token=c07nu3v48v6retjanc0g&fbclid=IwAR2zi1pkFhR881g63nv8tP36qkBW02EkiNM3-q6YxUV0TFTJk5agCCz99Gw'
 
     axios.get(url)
-    .then(function (response) {
-      const data1 = response.data
-      setData(data1)     
-      console.log('data1',data1) 
-      console.log('data',data) 
+    .then(async function (response) {
+      const data1 = await response.data
+        setData(data1.c)
+      console.log('data1',data1)
     })
     .catch((error) => { console.error(error) })
    }
    useEffect(() => {
-    initBidData() 
+    initData()
 
-    //  fetch('https://alifd.alibabausercontent.com/materials/@bizcharts/candlestick-basic/0.3.2/mock.json')
-    //    .then(res => res.json())
-    //    .then(data => {
-    //       const ds = new DataSet();
-    //       const dv = ds.createView();
-    //       console.log('dv1',dv)
-    //       dv.source(data)
-    //         .transform({
-    //           type: 'map',
-    //           callback: obj => {
-    //             obj.trend = (obj.start <= obj.end) ? '上涨' : '下跌';
-    //             obj.range = [obj.start, obj.end, obj.max, obj.min];
-    //             return obj;
-    //           }
-    //         });
-    //        console.log(dv)
-    //        setData(dv.rows);
-    //    })
    }, [])
    
    return (
@@ -63,7 +44,7 @@ import axios from 'axios';
         range: [0, 1],
         tickCount: 4,
         },
-        
+
         v: { alias: '成交量' },
         o: { alias: '开盘价' },
         c: { alias: '收盘价' },
@@ -94,7 +75,7 @@ import axios from 'axios';
             if (val === '上涨') {
               return '#f04864';
             }
-    
+
             if (val === '下跌') {
               return '#2fc25b';
             }
@@ -156,5 +137,11 @@ import axios from 'axios';
   </>
   )
  }
- 
+
+// Charts.getInitialProps = async ()=>{
+//      const res = await fetch('https://finnhub.io/api/v1/stock/candle?symbol=AAPL&resolution=D&from=1612108800&to=1612540800&token=c07nu3v48v6retjanc0g&fbclid=IwAR2zi1pkFhR881g63nv8tP36qkBW02EkiNM3-q6YxUV0TFTJk5agCCz99Gw')
+//      const data = res.json()
+//     console.log(data)
+//      return {c:data}
+// }
  export default Charts
