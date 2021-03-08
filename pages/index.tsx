@@ -2,22 +2,22 @@ import Head from "next/head"
 import React, { useState, useEffect } from "react"
 import { Card, Skeleton, Table, Row, Col, Radio } from "antd"
 import { ColumnsType } from "antd/es/table"
-import styles from "../styles/Home.module.css"
+import styles from "../styles/Home.module.scss"
 import Footer from "../components/footer"
 // import Chart from "../components/chart/chart"
 import AreaChart from "../components/chart/areaChart"
 // import getData from "./api/test"
-import { generalNews } from "./api/news"
+import { marketNews } from "./api/news"
 import getAreaChartData from "./api/chart"
 
 function Home() {
-  const [noTitleKey, setKey] = useState("Feed")
+  const [tab, setTab] = useState("general")
   const [loading, setLoading] = useState(false)
   const [dowData, setDow]: [any, any] = useState(null)
   const [spData, setSP]: [any, any] = useState(null)
   const [nasdaqData, setNasdaq]: [any, any] = useState(null)
   const [feedNews, setFeedNews]: [any[], any] = useState([])
-  // const [news, setNews]: [any, any] = useState(null)
+  const [forexNews, setForexNews]: [any, any] = useState([])
   const [rankData]: [any, any] = useState(null)
   // second arugs is empty , the useEffect just run once --> componentDidMounted
 
@@ -58,7 +58,7 @@ function Home() {
       setSP(spResponse)
       setNasdaq(ndxResponse)
       // fetch feed news
-      const response = await generalNews("general")
+      const response = await marketNews(tab)
       setFeedNews(response)
       setLoading(false)
     }
@@ -66,12 +66,12 @@ function Home() {
   }, [])
   const tabListNoTitle = [
     {
-      key: "Feed",
+      key: "general",
       tab: "News Feed"
     },
     {
-      key: "News",
-      tab: "Your News"
+      key: "forex",
+      tab: "Forex News"
     }
   ]
   const feedColumns: ColumnsType<any> = [
@@ -97,23 +97,44 @@ function Home() {
       )
     }
   ]
+  const forexColumns: ColumnsType<any> = [
+    { title: "datetime", dataIndex: "datetime", key: "datetime" },
+    {
+      title: "headline",
+      dataIndex: "headline",
+      key: "headline",
+      render: (headline: string, record: any) => {
+        return (
+          <a href={record.url} target="_blank" rel="noreferrer noopener">
+            {headline}
+          </a>
+        )
+      }
+    },
+    {
+      title: "",
+      dataIndex: "image",
+      key: "image",
+      render: (image: string) => (
+        <img src={image} alt="" className={styles.newImg} />
+      )
+    }
+  ]
   const contentListNoTitle: any = {
-    Feed: (
-      <p>
-        <Table
-          columns={feedColumns}
-          // expandable={{
-          //   expandedRowRender: (record: any) => (
-          //     <p style={{ margin: 0 }}>{record.summary}</p>
-          //   ),
-          //   rowExpandable: (record: any) => record.name !== "Not Expandable"
-          // }}
-          dataSource={feedNews}
-          pagination={{ pageSize: 5 }}
-        />
-      </p>
+    general: (
+      <Table
+        columns={feedColumns}
+        dataSource={feedNews}
+        pagination={{ pageSize: 5, showSizeChanger: false }}
+      />
     ),
-    News: <p>News content</p>
+    forex: (
+      <Table
+        columns={forexColumns}
+        dataSource={forexNews}
+        pagination={{ pageSize: 5, showSizeChanger: false }}
+      />
+    )
   }
   const columns = [
     {
@@ -134,21 +155,30 @@ function Home() {
     }
   ]
   //
-
-  const onTabChange = (key: any) => {
-    console.log(key)
-    setLoading(true)
-    setKey(key)
-    setTimeout(() => {
-      setLoading(false)
-    }, 2000)
-  }
-  const handleSizeChange = (e: any) => {
+  const handleResolutionChange = (e: any) => {
     // this.setState({ size: e.target.value });
     console.log(e)
   }
+  const onTabChange = async (key: any) => {
+    console.log("onTabChange")
+    console.log(key)
+    setTab(key)
+    setLoading(true)
+    let response = null
+    if (key === "forex" && !forexNews.length) {
+      response = await marketNews(key)
+      setForexNews(response)
+    } else if (key === "general" && !feedNews.length) {
+      response = await marketNews(key)
+      setFeedNews(response)
+    }
+    setLoading(false)
+  }
+
   return (
     <div className={styles.container}>
+      {console.log("feedNews", feedNews)}
+      {console.log("forexNews", forexNews)}
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
@@ -161,7 +191,7 @@ function Home() {
             <Row>
               <Col span={8}>
                 {dowData && (
-                  <div style={{ margin: "10px" }}>
+                  <div style={{ margin: "7px" }}>
                     <AreaChart
                       data={dowData}
                       type="svg"
@@ -170,7 +200,7 @@ function Home() {
                       ratio={1}
                     />
                     <Radio.Group
-                      onChange={handleSizeChange}
+                      onChange={handleResolutionChange}
                       className={styles.resolutionBtn}>
                       <Radio.Button value="D">D</Radio.Button>
                       <Radio.Button value="5D">5D</Radio.Button>
@@ -190,7 +220,7 @@ function Home() {
                       ratio={1}
                     />
                     <Radio.Group
-                      onChange={handleSizeChange}
+                      onChange={handleResolutionChange}
                       className={styles.resolutionBtn}>
                       <Radio.Button value="D">D</Radio.Button>
                       <Radio.Button value="5D">5D</Radio.Button>
@@ -210,7 +240,7 @@ function Home() {
                       ratio={1}
                     />
                     <Radio.Group
-                      onChange={handleSizeChange}
+                      onChange={handleResolutionChange}
                       className={styles.resolutionBtn}>
                       <Radio.Button value="D">D</Radio.Button>
                       <Radio.Button value="5D">5D</Radio.Button>
@@ -223,17 +253,17 @@ function Home() {
             {/* news */}
             <Row>
               <Col span={16}>
-                {" "}
                 <Card
+                  className={styles.newsCard}
                   style={{ maxWidth: "90%", minWidth: "200px" }}
                   tabList={tabListNoTitle}
-                  activeTabKey={noTitleKey}
+                  activeTabKey={tab}
                   // tabBarExtraContent={<a href="#">More</a>}
                   onTabChange={(key) => {
                     onTabChange(key)
                   }}>
                   <Skeleton loading={loading} avatar active>
-                    {contentListNoTitle[noTitleKey]}
+                    {contentListNoTitle[tab]}
                   </Skeleton>
                 </Card>
               </Col>

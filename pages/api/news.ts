@@ -1,7 +1,7 @@
 import request from "./request"
 // category = general, forex, crypto, merger
-export function generalNews(category: string): Promise<any> {
-  const url = `/news?=${category}`
+export function marketNews(category: string): Promise<any> {
+  const url = `/news?category=${category}`
   return request.get(url)
 }
 
