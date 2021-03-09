@@ -1,7 +1,8 @@
 import Head from "next/head"
 import React, { useState, useEffect } from "react"
-import { Card, Skeleton, Table, Row, Col, Radio } from "antd"
+import { Card, Skeleton, Table, Row, Col, Radio, Button } from "antd"
 import { ColumnsType } from "antd/es/table"
+import { SyncOutlined } from "@ant-design/icons"
 import styles from "../styles/Home.module.scss"
 import Footer from "../components/footer"
 // import Chart from "../components/chart/chart"
@@ -34,28 +35,9 @@ function Home() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
-      // fetch data
-      // const dowResponse = await getAreaChartData(
-      //   "DJI",
-      //   "D",
-      //   oneYearBefore(),
-      //   today()
-      // )
-      // const spResponse = await getAreaChartData(
-      //   "DJI",
-      //   "D",
-      //   oneYearBefore(),
-      //   today()
-      // )
-      // const ndxResponse = await getAreaChartData(
-      //   "NDX",
-      //   "D",
-      //   oneYearBefore(),
-      //   today()
-      // )
       const chartApi = [
         getAreaChartData("DJI", "D", oneYearBefore(), today()),
-        getAreaChartData("DJI", "D", oneYearBefore(), today()),
+        getAreaChartData("SPY", "D", oneYearBefore(), today()),
         getAreaChartData("NDX", "D", oneYearBefore(), today()),
         marketNews("general")
       ]
@@ -141,7 +123,26 @@ function Home() {
       />
     )
   }
-  const columns = [
+  const moverColumns = [
+    {
+      title: "DAY GAINERS",
+      dataIndex: "DAY_GAINERS",
+      key: "DAY_GAINERS",
+      render: (text: string) => <a>{text}</a>
+    },
+    {
+      title: "DAY LOSERS",
+      dataIndex: "DAY_LOSERS",
+      key: "DAY_LOSERS"
+    },
+    {
+      title: "MOST ACTIVES",
+      dataIndex: "MOST_ACTIVES",
+      key: "MOST_ACTIVES"
+    }
+  ]
+
+  const positionColumns = [
     {
       title: "Symbol",
       dataIndex: "symbol",
@@ -149,14 +150,14 @@ function Home() {
       render: (text: string) => <a>{text}</a>
     },
     {
-      title: "Age",
+      title: "%Change",
       dataIndex: "age",
       key: "age"
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address"
+      title: "Last Price",
+      dataIndex: "last",
+      key: "last"
     }
   ]
   //
@@ -193,74 +194,80 @@ function Home() {
         <>
           <div className={styles.content}>
             {/* area chart */}
-            <Row>
+            <Row gutter={[16, 16]}>
               <Col span={8}>
-                {dowData && (
-                  <div style={{ margin: "7px" }}>
-                    <AreaChart
-                      data={dowData}
-                      type="svg"
-                      width={400}
-                      height={200}
-                      ratio={1}
-                    />
-                    <Radio.Group
-                      onChange={handleResolutionChange}
-                      className={styles.resolutionBtn}>
-                      <Radio.Button value="D">D</Radio.Button>
-                      <Radio.Button value="5D">5D</Radio.Button>
-                      <Radio.Button value="M">M</Radio.Button>
-                    </Radio.Group>
-                  </div>
-                )}
+                <Card>
+                  {dowData && (
+                    <div>
+                      <AreaChart
+                        data={dowData}
+                        type="svg"
+                        width={400}
+                        height={200}
+                        ratio={1}
+                      />
+                      <Radio.Group
+                        onChange={handleResolutionChange}
+                        className={styles.resolutionBtn}>
+                        <Radio.Button value="D">D</Radio.Button>
+                        <Radio.Button value="5D">5D</Radio.Button>
+                        <Radio.Button value="M">M</Radio.Button>
+                      </Radio.Group>
+                    </div>
+                  )}
+                </Card>
               </Col>
               <Col span={8}>
-                {spData && (
-                  <div>
-                    <AreaChart
-                      data={spData}
-                      type="svg"
-                      width={400}
-                      height={200}
-                      ratio={1}
-                    />
-                    <Radio.Group
-                      onChange={handleResolutionChange}
-                      className={styles.resolutionBtn}>
-                      <Radio.Button value="D">D</Radio.Button>
-                      <Radio.Button value="5D">5D</Radio.Button>
-                      <Radio.Button value="M">M</Radio.Button>
-                    </Radio.Group>
-                  </div>
-                )}
+                <Card>
+                  {spData && (
+                    <div>
+                      <AreaChart
+                        data={spData}
+                        type="svg"
+                        width={400}
+                        height={200}
+                        ratio={1}
+                      />
+                      <Radio.Group
+                        onChange={handleResolutionChange}
+                        className={styles.resolutionBtn}>
+                        <Radio.Button value="D">D</Radio.Button>
+                        <Radio.Button value="5D">5D</Radio.Button>
+                        <Radio.Button value="M">M</Radio.Button>
+                      </Radio.Group>
+                    </div>
+                  )}
+                </Card>
               </Col>
               <Col span={8}>
-                {nasdaqData && (
-                  <div>
-                    <AreaChart
-                      data={nasdaqData}
-                      type="hybrid"
-                      width={400}
-                      height={200}
-                      ratio={1}
-                    />
-                    <Radio.Group
-                      onChange={handleResolutionChange}
-                      className={styles.resolutionBtn}>
-                      <Radio.Button value="D">D</Radio.Button>
-                      <Radio.Button value="5D">5D</Radio.Button>
-                      <Radio.Button value="M">M</Radio.Button>
-                    </Radio.Group>
-                  </div>
-                )}
+                <Card>
+                  {nasdaqData && (
+                    <div>
+                      <AreaChart
+                        data={nasdaqData}
+                        type="hybrid"
+                        width={400}
+                        height={200}
+                        ratio={1}
+                      />
+                      <Radio.Group
+                        onChange={handleResolutionChange}
+                        className={styles.resolutionBtn}>
+                        <Radio.Button value="D">D</Radio.Button>
+                        <Radio.Button value="5D">5D</Radio.Button>
+                        <Radio.Button value="M">M</Radio.Button>
+                      </Radio.Group>
+                    </div>
+                  )}
+                </Card>
               </Col>
-            </Row>
-            {/* news */}
-            <Row>
+              {/* </Row> */}
+              {/* news */}
+              {/* <Row gutter={[16, 16]}> */}
               <Col span={16}>
                 <Card
                   className={styles.newsCard}
-                  style={{ maxWidth: "90%", minWidth: "200px" }}
+                  // style={{ maxWidth: "90%", minWidth: "200px" }}
                   tabList={tabListNoTitle}
                   activeTabKey={tab}
                   // tabBarExtraContent={<a href="#">More</a>}
@@ -272,12 +279,25 @@ function Home() {
                   </Skeleton>
                 </Card>
               </Col>
-              {/* popluar ranking */}
+
               <Col span={8}>
+                {/* popluar ranking */}
+                <Card
+                  extra={<Button shape="circle" icon={<SyncOutlined />} />}
+                  bodyStyle={{ padding: 0 }}
+                  style={{ marginBottom: "8px" }}>
+                  <Table columns={moverColumns} dataSource={rankData} />
+                </Card>
+                {/* position */}
                 <Card bodyStyle={{ padding: 0 }}>
-                  <Table columns={columns} dataSource={rankData} />
+                  <Table columns={positionColumns} dataSource={rankData} />
+                  <Button style={{ width: "100%" }} type="dashed">
+                    + Add Position
+                  </Button>
                 </Card>
               </Col>
+
+              <Col span={8} offset={16} />
             </Row>
           </div>
         </>

@@ -36,7 +36,9 @@
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
     ],
     "no-unused-vars": "warn",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn"]
+
   },
   "overrides": [
     {

@@ -2,7 +2,7 @@ import { Menu, Dropdown, Avatar, Input } from "antd"
 import {
   MailOutlined,
   AppstoreOutlined,
-  SettingOutlined,
+  // SettingOutlined,
   UserOutlined,
   DownOutlined
 } from "@ant-design/icons"
@@ -59,13 +59,16 @@ function NavBar(props: { showTickerTap: boolean }) {
   return (
     <>
       <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
+        <Menu.Item key="mail" icon={<MailOutlined />} style={{ width: "20%" }}>
+          {/* Overview */}這裡放股咕雞圖
+        </Menu.Item>
         <Menu.Item key="mail" icon={<MailOutlined />}>
-          Navigation One
+          Overview
         </Menu.Item>
-        <Menu.Item key="app" disabled icon={<AppstoreOutlined />}>
-          Navigation Two
+        <Menu.Item key="app" icon={<AppstoreOutlined />}>
+          Watchlist
         </Menu.Item>
-        <SubMenu
+        {/* <SubMenu
           key="SubMenu"
           icon={<SettingOutlined />}
           title="Navigation Three - Submenu">
@@ -77,14 +80,9 @@ function NavBar(props: { showTickerTap: boolean }) {
             <Menu.Item key="setting:3">Option 3</Menu.Item>
             <Menu.Item key="setting:4">Option 4</Menu.Item>
           </Menu.ItemGroup>
-        </SubMenu>
+        </SubMenu> */}
         <Menu.Item key="alipay">
-          <a
-            href="https://ant.design"
-            target="_blank"
-            rel="noopener noreferrer">
-            Navigation Four - Link
-          </a>
+          <Link href="/">Position</Link>
         </Menu.Item>
         <Menu.Item className={styles.noUnderline}>
           {/* <Input.Group> */}
