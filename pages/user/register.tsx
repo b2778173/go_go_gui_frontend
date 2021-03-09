@@ -12,6 +12,7 @@ import {
 import {QuestionCircleOutlined} from '@ant-design/icons';
 import styles from '../../styles/Home.module.css'
 import axios from "axios";
+import Router from "next/router";
 
 
 const {Option} = Select;
@@ -70,6 +71,7 @@ export default function register() {
         console.log('userInfo', userInfo)
         await axios.post('http://localhost:5000/create_user', userInfo).then(res => {
             console.log('res', res)
+            Router.push('/user/login');
         });
     };
 

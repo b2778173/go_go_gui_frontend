@@ -1,12 +1,32 @@
 import {Form, Input, Button, Checkbox} from 'antd';
 import {UserOutlined, LockOutlined} from '@ant-design/icons';
 import styles from '../../styles/Home.module.css'
-import React from "react";
+import React, {useState} from "react";
+import axios from "axios";
+import Router from "next/router";
+import FacebookLogin from 'react-facebook-login';
 
 export default function login() {
-    const onFinish = (values: any) => {
+    const onFinish = async (values: any) => {
         console.log('Received values of form: ', values);
+        const user = {
+            "username": values.username,
+            "password": values.password
+        }
+        await axios.post('http://localhost:5000/auth', user).then(res => {
+            console.log('res', res)
+            Router.push('/profile');
+        });
     };
+
+    const [accessToken, setAccessToken] = useState("")
+    const componentClicked = (data: object) => {
+        console.log(data)
+    }
+    const responseFacebook = (response: any) => {
+        console.log(response);
+        setAccessToken(response.accessToken)
+    }
 
     return (
         <Form
@@ -17,6 +37,7 @@ export default function login() {
             }}
             onFinish={onFinish}
         >
+            {accessToken}
             <Form.Item
                 name="username"
                 rules={[
@@ -59,6 +80,13 @@ export default function login() {
                 </Button>
                 Or <a href="/user/register">register now!</a>
             </Form.Item>
+
+            <FacebookLogin
+                appId="479394116407879"
+                autoLoad={true}
+                fields="name,email,picture"
+                onClick={componentClicked}
+                callback={responseFacebook}/>,
         </Form>
     );
 };
