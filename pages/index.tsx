@@ -35,31 +35,36 @@ function Home() {
     async function fetchData() {
       setLoading(true)
       // fetch data
-      const dowResponse = await getAreaChartData(
-        "DJI",
-        "D",
-        oneYearBefore(),
-        today()
-      )
-      const spResponse = await getAreaChartData(
-        "DJI",
-        "D",
-        oneYearBefore(),
-        today()
-      )
-      const ndxResponse = await getAreaChartData(
-        "NDX",
-        "D",
-        oneYearBefore(),
-        today()
-      )
-      // const dowResponse = await getData()
-      setDow(dowResponse)
-      setSP(spResponse)
-      setNasdaq(ndxResponse)
-      // fetch feed news
-      const response = await marketNews(tab)
-      setFeedNews(response)
+      // const dowResponse = await getAreaChartData(
+      //   "DJI",
+      //   "D",
+      //   oneYearBefore(),
+      //   today()
+      // )
+      // const spResponse = await getAreaChartData(
+      //   "DJI",
+      //   "D",
+      //   oneYearBefore(),
+      //   today()
+      // )
+      // const ndxResponse = await getAreaChartData(
+      //   "NDX",
+      //   "D",
+      //   oneYearBefore(),
+      //   today()
+      // )
+      const chartApi = [
+        getAreaChartData("DJI", "D", oneYearBefore(), today()),
+        getAreaChartData("DJI", "D", oneYearBefore(), today()),
+        getAreaChartData("NDX", "D", oneYearBefore(), today()),
+        marketNews("general")
+      ]
+      const [res0, res1, res2, res3]: any = await Promise.all(chartApi)
+      console.log("chartResponse=", res0, res1, res2, res3)
+      setDow(res0)
+      setSP(res1)
+      setNasdaq(res2)
+      setFeedNews(res3)
       setLoading(false)
     }
     fetchData()
@@ -177,8 +182,8 @@ function Home() {
 
   return (
     <div className={styles.container}>
-      {console.log("feedNews", feedNews)}
-      {console.log("forexNews", forexNews)}
+      {/* {console.log("feedNews", feedNews)}
+      {console.log("forexNews", forexNews)} */}
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />

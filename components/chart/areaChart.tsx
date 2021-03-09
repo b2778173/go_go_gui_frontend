@@ -38,6 +38,7 @@ function AreaChart(props: {
       zoomEvent={false}
       // xExtents={[new Date(1614590862), new Date(1614936462)]}
     >
+      {console.log("area chart render")}
       <Chart id={0} yExtents={(d: any) => d.close}>
         <defs>
           <linearGradient id="MyGradient" x1="0" y1="100%" x2="0" y2="0%">
