@@ -20,7 +20,7 @@ import Router from 'next/Router'
     justify-content: center;
     align-items: center;
   `
-const Forgotpwd = () => {
+const Verify = () => {
     const onFinish = (values: any) => {
       console.log('Success:', values);
     };
@@ -40,15 +40,15 @@ const Forgotpwd = () => {
             onFinishFailed={onFinishFailed}
         >
           <Form.Item
-              label="Email"
-              name="email"
-              rules={[{ required: true, message: 'Please input your email!' }]}
+              label="Verify code"
+              name="verify"
+              rules={[{ required: true, message: 'Please input code!' }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item {...tailLayout}>
-            <Button onClick={()=>{Router.push('./verify')}} type="primary" htmlType="submit">
+            <Button onClick={()=>{Router.push('./reset')}} type="primary" htmlType="submit">
               Next
             </Button>
           </Form.Item>
@@ -57,4 +57,4 @@ const Forgotpwd = () => {
   );
 };
 
-export default Forgotpwd
+export default Verify

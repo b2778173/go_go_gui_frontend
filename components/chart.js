@@ -21,8 +21,10 @@ import axios from 'axios';
     axios.get(url)
     .then(async function (response) {
       const data1 = await response.data
-        setData(data1.c)
-      console.log('data1',data1)
+        let arr = []
+        let arr2 = await arr.push(data1)
+        setData(arr)
+      console.log('arr',arr)
     })
     .catch((error) => { console.error(error) })
    }
@@ -68,7 +70,7 @@ import axios from 'axios';
       }}
     >
       <Schema
-        position={'time*range'}
+        position={'t*v'}
         shape={'candle'}
         color={[
           'trend', val => {
@@ -106,8 +108,8 @@ import axios from 'axios';
         }
       }}
     >
-    <Axis name="time" tickLine={null} label={null} />
-    <Axis name="volumn"
+    <Axis name="t" tickLine={null} label={null} />
+    <Axis name="v"
       label={{
           formatter: val => {
             return +val / 1000 + 'k';
@@ -115,7 +117,7 @@ import axios from 'axios';
         }}
     />
     <Interval
-      position={'time*volumn'}
+      position={'t*v'}
       color={['trend', val => {
         if (val === '上涨') {
           return '#f04864';
@@ -125,7 +127,7 @@ import axios from 'axios';
           return '#2fc25b';
         }
       }]}
-      tooltip={['time*volumn', (t, v) => {
+      tooltip={['t*v', (t, v) => {
         return {
           name: t,
           value: '<br/><span style="padding-left: 16px">成交量：' + v + '</span><br/>'
