@@ -18,7 +18,7 @@ function NavBar(props: { showTickerTap: boolean }) {
   const [current, changeCurrent] = useState("mail")
 
   // component
-  const { SubMenu } = Menu
+  // const { SubMenu } = Menu
   const { Search } = Input
   // const { Option } = Select
 
