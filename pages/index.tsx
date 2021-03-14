@@ -81,6 +81,65 @@ function Home() {
     }
     fetchData()
   }, [])
+
+  const formatTime = (getTime: number): string => {
+    return moment(getTime).format("YYYY-MM-DD")
+  }
+
+  const handleResolutionChange = (e: any) => {
+    // this.setState({ size: e.target.value });
+    console.log(e)
+  }
+  const fetchWatchlistNews = async () => {
+    const now: number = new Date().getTime() as number
+    const preTreeDay: number = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      new Date().getDate() - 3
+    ).getTime() as number
+    const data = [
+      companyNews("GOEV", formatTime(preTreeDay), formatTime(now)),
+      companyNews("TRIP", formatTime(preTreeDay), formatTime(now)),
+      companyNews("AAPL", formatTime(preTreeDay), formatTime(now))
+    ]
+    const response = await Promise.all(data)
+    setUNews(response[0].concat(response[1]).concat(response[2]))
+  }
+  const onTabChange = async (key: any) => {
+    setTab(key)
+    setLoading(true)
+    let response = null
+    if (key === "forex" && !forexNews.length) {
+      response = await marketNews(key)
+      setForexNews(response)
+    } else if (key === "general" && !feedNews.length) {
+      response = await marketNews(key)
+      setFeedNews(response)
+    } else if (key === "cypto" && !cyptoNews.length) {
+      response = await marketNews(key)
+      setCyptoNews(response)
+    } else if (key === "merger" && !mergeNews.length) {
+      response = await marketNews(key)
+      setMergeNews(response)
+    } else if (key === "your" && !uNews.length) {
+      fetchWatchlistNews()
+    }
+    setLoading(false)
+  }
+  const moverTabChange = (key: string) => {
+    setMoverTab(key)
+  }
+  const updateMover = async () => {
+    setMoverLoading(true)
+    const dayMoverRespose = await dayMover(0, 20)
+    const [gainer, loser, activer] = dayMoverRespose.finance.result
+    setGainer(gainer.quotes)
+    setLoser(loser.quotes)
+    setActive(activer.quotes)
+    setMoverLoading(false)
+    // quote price
+    // to do
+  }
   const tabListNoTitle = [
     {
       key: "general",
@@ -99,7 +158,7 @@ function Home() {
       tab: "Merge News"
     },
     {
-      key: "u",
+      key: "your",
       tab: "Your News"
     }
   ]
@@ -160,7 +219,7 @@ function Home() {
         pagination={{ pageSize: 5, showSizeChanger: false }}
       />
     ),
-    u: (
+    your: (
       <Table
         columns={newColumns}
         dataSource={uNews}
@@ -242,59 +301,7 @@ function Home() {
       key: "last"
     }
   ]
-  const formatTime = (getTime: number): string => {
-    return moment(getTime).format("YYYY-MM-DD")
-  }
-  //
-  const handleResolutionChange = (e: any) => {
-    // this.setState({ size: e.target.value });
-    console.log(e)
-  }
-  const onTabChange = async (key: any) => {
-    setTab(key)
-    setLoading(true)
-    let response = null
-    if (key === "forex" && !forexNews.length) {
-      response = await marketNews(key)
-      setForexNews(response)
-    } else if (key === "general" && !feedNews.length) {
-      response = await marketNews(key)
-      setFeedNews(response)
-    } else if (key === "cypto" && !cyptoNews.length) {
-      response = await marketNews(key)
-      setCyptoNews(response)
-    } else if (key === "merger" && !mergeNews.length) {
-      response = await marketNews(key)
-      setMergeNews(response)
-    } else if (key === "u" && !uNews.length) {
-      const now: number = new Date().getTime() as number
-      const preTree: number = new Date(
-        new Date().getFullYear(),
-        new Date().getMonth(),
-        new Date().getDate() - 3
-      ).getTime() as number
-      const data = [
-        companyNews("GOEV", formatTime(preTree), formatTime(now)),
-        companyNews("TRIP", formatTime(preTree), formatTime(now)),
-        companyNews("AAPL", formatTime(preTree), formatTime(now))
-      ]
-      response = await Promise.all(data)
-      setUNews(response[0].concat(response[1]).concat(response[2]))
-    }
-    setLoading(false)
-  }
-  const moverTabChange = (key: string) => {
-    setMoverTab(key)
-  }
-  const updateMover = async () => {
-    setMoverLoading(true)
-    const dayMoverRespose = await dayMover(0, 20)
-    const [gainer, loser, activer] = dayMoverRespose.finance.result
-    setGainer(gainer.quotes)
-    setLoser(loser.quotes)
-    setActive(activer.quotes)
-    setMoverLoading(false)
-  }
+
   return (
     <div className={styles.container}>
       {/* {console.log("feedNews", feedNews)}
