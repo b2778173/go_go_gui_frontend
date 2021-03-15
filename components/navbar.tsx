@@ -59,7 +59,10 @@ function NavBar(props: { showTickerTap: boolean }) {
   return (
     <>
       <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
-        <Menu.Item key="mail" icon={<MailOutlined />} style={{ width: "20%" }}>
+        <Menu.Item
+          key="favicon"
+          icon={<MailOutlined />}
+          style={{ width: "20%" }}>
           {/* Overview */}這裡放股咕雞圖
         </Menu.Item>
         <Menu.Item key="mail" icon={<MailOutlined />}>

@@ -11,7 +11,7 @@ import AreaChart from "../components/chart/areaChart"
 // import getData from "./api/test"
 import { marketNews, companyNews } from "../api/news"
 import getAreaChartData from "../api/chart"
-import { dayMover } from "../api/stock"
+import { dayMover, quote } from "../api/stock"
 
 function Home() {
   const [tab, setTab] = useState("general")
@@ -50,7 +50,7 @@ function Home() {
         getAreaChartData("SPY", "D", oneYearBefore(), today()),
         getAreaChartData("NDX", "D", oneYearBefore(), today()),
         marketNews("general"),
-        dayMover(0, 20)
+        dayMover(0, 5)
       ]
 
       const [
@@ -126,12 +126,41 @@ function Home() {
     }
     setLoading(false)
   }
-  const moverTabChange = (key: string) => {
+  const moverTabChange = async (key: string) => {
     setMoverTab(key)
+    let symbols: string[] = []
+    // console.log(dayGainer, dayLoser, mostActive)
+    setMoverLoading(true)
+    if (key === "gainer") {
+      symbols = dayGainer.map((e: { symbol: string }) => e.symbol)
+      const response: any = await quote(symbols)
+      dayGainer.forEach((e: any, i: number) => {
+        const target = response[i]
+        e.change = target.change
+        e.lastPrice = target.l
+      })
+    } else if (key === "loser") {
+      symbols = dayLoser.map((e: { symbol: string }) => e.symbol)
+      const response: any = await quote(symbols)
+      dayLoser.forEach((e: any, i: number) => {
+        const target = response[i]
+        e.change = target.change
+        e.lastPrice = target.l
+      })
+    } else {
+      symbols = mostActive.map((e: { symbol: string }) => e.symbol)
+      const response: any = await quote(symbols)
+      mostActive.forEach((e: any, i: number) => {
+        const target = response[i]
+        e.change = target.change
+        e.lastPrice = target.l
+      })
+    }
+    setMoverLoading(false)
   }
   const updateMover = async () => {
     setMoverLoading(true)
-    const dayMoverRespose = await dayMover(0, 20)
+    const dayMoverRespose = await dayMover(0, 5)
     const [gainer, loser, activer] = dayMoverRespose.finance.result
     setGainer(gainer.quotes)
     setLoser(loser.quotes)
@@ -175,7 +204,11 @@ function Home() {
       key: "headline",
       render: (headline: string, record: any) => {
         return (
-          <a href={record.url} target="_blank" rel="noreferrer noopener">
+          <a
+            href={record.url}
+            className={styles.headline}
+            target="_blank"
+            rel="noreferrer noopener">
             {headline}
           </a>
         )
@@ -250,13 +283,19 @@ function Home() {
     },
     {
       title: "Change %",
-      dataIndex: "DAY_LOSERS",
-      key: "DAY_LOSERS"
+      dataIndex: "change",
+      key: "change",
+      render: (change: number) => (
+        <span>
+          {change > 0 ? "+" : "-"}
+          {(Math.round(change * 100) / 100) * 100}%
+        </span>
+      )
     },
     {
       title: "Last Price",
-      dataIndex: "MOST_ACTIVES",
-      key: "MOST_ACTIVES"
+      dataIndex: "lastPrice",
+      key: "lastPrice"
     }
   ]
   const moverContent: any = {
