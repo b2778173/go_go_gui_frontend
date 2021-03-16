@@ -36,6 +36,36 @@ function Home() {
     return Math.round(new Date().getTime() / 1000)
   }
 
+  const fetchMover = async (key: string) => {
+    let symbols: string[] = []
+    console.log(dayGainer, dayLoser, mostActive)
+    if (key === "gainer") {
+      symbols = dayGainer.map((e: { symbol: string }) => e.symbol)
+      const response: any = await quote(symbols)
+      dayGainer.forEach((e: any, i: number) => {
+        const target = response[i]
+        e.change = target.change
+        e.lastPrice = target.l
+      })
+    } else if (key === "loser") {
+      symbols = dayLoser.map((e: { symbol: string }) => e.symbol)
+      const response: any = await quote(symbols)
+      dayLoser.forEach((e: any, i: number) => {
+        const target = response[i]
+        e.change = target.change
+        e.lastPrice = target.l
+      })
+    } else {
+      symbols = mostActive.map((e: { symbol: string }) => e.symbol)
+      const response: any = await quote(symbols)
+      mostActive.forEach((e: any, i: number) => {
+        const target = response[i]
+        e.change = target.change
+        e.lastPrice = target.l
+      })
+    }
+  }
+
   const oneYearBefore = () => {
     const Y = new Date().getFullYear()
     const M = new Date().getMonth()
@@ -60,6 +90,7 @@ function Home() {
         newsResponse,
         dayMoverRespose
       ]: any = await Promise.all(fetchApi)
+
       console.log(
         dowResponse,
         spyResponse,
@@ -72,14 +103,15 @@ function Home() {
       setNasdaq(ndxResponse)
       setFeedNews(newsResponse)
       // setMover(dayMoverRespose)
-
       const [gainer, loser, activer] = dayMoverRespose.finance.result
-      setGainer(gainer.quotes)
-      setLoser(loser.quotes)
-      setActive(activer.quotes)
+      await setGainer(gainer.quotes)
+      await setLoser(loser.quotes)
+      await setActive(activer.quotes)
       setLoading(false)
     }
     fetchData()
+    // quote price
+    // return fetchMover(moverTab)
   }, [])
 
   const formatTime = (getTime: number): string => {
@@ -126,36 +158,12 @@ function Home() {
     }
     setLoading(false)
   }
+
   const moverTabChange = async (key: string) => {
-    setMoverTab(key)
-    let symbols: string[] = []
-    // console.log(dayGainer, dayLoser, mostActive)
+    console.log("moverTabChange")
     setMoverLoading(true)
-    if (key === "gainer") {
-      symbols = dayGainer.map((e: { symbol: string }) => e.symbol)
-      const response: any = await quote(symbols)
-      dayGainer.forEach((e: any, i: number) => {
-        const target = response[i]
-        e.change = target.change
-        e.lastPrice = target.l
-      })
-    } else if (key === "loser") {
-      symbols = dayLoser.map((e: { symbol: string }) => e.symbol)
-      const response: any = await quote(symbols)
-      dayLoser.forEach((e: any, i: number) => {
-        const target = response[i]
-        e.change = target.change
-        e.lastPrice = target.l
-      })
-    } else {
-      symbols = mostActive.map((e: { symbol: string }) => e.symbol)
-      const response: any = await quote(symbols)
-      mostActive.forEach((e: any, i: number) => {
-        const target = response[i]
-        e.change = target.change
-        e.lastPrice = target.l
-      })
-    }
+    setMoverTab(key)
+    await fetchMover(key)
     setMoverLoading(false)
   }
   const updateMover = async () => {
@@ -165,6 +173,8 @@ function Home() {
     setGainer(gainer.quotes)
     setLoser(loser.quotes)
     setActive(activer.quotes)
+
+    fetchMover(moverTab)
     setMoverLoading(false)
     // quote price
     // to do
@@ -285,12 +295,13 @@ function Home() {
       title: "Change %",
       dataIndex: "change",
       key: "change",
-      render: (change: number) => (
-        <span>
-          {change > 0 ? "+" : "-"}
-          {(Math.round(change * 100) / 100) * 100}%
-        </span>
-      )
+      render: (change: number) =>
+        change && (
+          <span className={change > 0 ? styles.plusChange : styles.minusChange}>
+            {change > 0 ? "+ " : "- "}
+            {(Math.round(Math.abs(change * 100)) / 100) * 100}%
+          </span>
+        )
     },
     {
       title: "Last Price",
