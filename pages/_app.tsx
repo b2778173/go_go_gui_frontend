@@ -10,8 +10,6 @@ import { Spin } from "antd"
 import AppContainer from "../components/app-container"
 import NavBar from "../components/navbar"
 
-// import Chart from "../components/chart"
-
 function App({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
