@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 
 function TickerTape() {
   useEffect(() => {
-    // componentDidMounted
+    // componentDidMounted && componentDidUpdate
 
     if (document.getElementById("chart")) {
       const script = document.createElement("script")
@@ -41,7 +41,7 @@ function TickerTape() {
         document.getElementById("chart")!.appendChild(script)
       }
     }
-    // componentDidUpdate 及 componentWillUnmount
+    // componentDidUpdate && componentWillUnmount
     return () => {}
   })
   return <div id="chart" style={{ width: "100%" }} />
