@@ -1,6 +1,7 @@
 {
     "name": "go_go_gui",
     "version": "0.1.0",
+    "license": "ISC",
     "private": true,
     "scripts": {
         "dev": "next dev",
@@ -25,6 +26,7 @@
         "eslint-config-airbnb-typescript": "^12.3.1",
         "eslint-config-airbnb-typescript-prettier": "^4.1.0",
         "eslint-plugin-react-hooks": "^4.2.0",
+        "husky": "^5.2.0",
         "js-cookie": "^2.2.1",
         "moment": "^2.29.1",
         "next": "10.0.7",
@@ -32,6 +34,7 @@
         "prettier": "^2.2.1",
         "react": "17.0.1",
         "react-dom": "17.0.1",
+        "react-facebook-login": "^4.1.1",
         "react-stockcharts": "^0.7.8",
         "sass": "^1.32.8",
         "scss": "^0.2.4"

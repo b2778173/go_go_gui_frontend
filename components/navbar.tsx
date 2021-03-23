@@ -28,6 +28,9 @@ function NavBar(props: { showTickerTap: boolean }) {
         <Link href="/">Home</Link>
       </Menu.Item>
       <Menu.Item>
+        <Link href="/user/login">Login</Link>
+      </Menu.Item>
+      <Menu.Item>
         <Link href="/profile">Profile</Link>
       </Menu.Item>
       <Menu.Item>
@@ -52,11 +55,11 @@ function NavBar(props: { showTickerTap: boolean }) {
   }
   // handler
   const handleClick = (e: any) => {
-    console.log(e)
+    // console.log(e)
     changeCurrent(e.key)
   }
   const onSearch = (value: string) => {
-    console.log(value)
+    // console.log(value)
   }
 
   return (
@@ -117,7 +120,7 @@ function NavBar(props: { showTickerTap: boolean }) {
                   icon={<UserOutlined />}
                   className={styles.avatar}
                 />
-                name <DownOutlined />
+                name111 <DownOutlined />
               </a>
             </div>
           </Dropdown>

@@ -1,10 +1,11 @@
 import {Form, Input, Button, Checkbox} from 'antd';
 import {UserOutlined, LockOutlined} from '@ant-design/icons';
-import styles from '../../styles/Home.module.css'
+import styles from '../../styles/Home.module.scss'
 import React, {useState} from "react";
 import axios from "axios";
 import Router from "next/router";
 import FacebookLogin from 'react-facebook-login';
+import {Url} from "../../constant/urlConstant";
 
 export default function login() {
     const onFinish = async (values: any) => {
@@ -13,9 +14,10 @@ export default function login() {
             "username": values.username,
             "password": values.password
         }
-        await axios.post('http://localhost:5000/auth', user).then(res => {
+        await axios.post(Url.LOCAL + '/auth', user).then(res => {
             console.log('res', res)
-            Router.push('/profile');
+            localStorage.setItem("token", res.data.access_token);
+            Router.push('/');
         });
     };
 
@@ -25,6 +27,7 @@ export default function login() {
     }
     const responseFacebook = (response: any) => {
         console.log(response);
+        console.log(accessToken)
         setAccessToken(response.accessToken)
     }
 
@@ -37,7 +40,7 @@ export default function login() {
             }}
             onFinish={onFinish}
         >
-            {accessToken}
+
             <Form.Item
                 name="username"
                 rules={[
@@ -78,7 +81,7 @@ export default function login() {
                 <Button type="primary" htmlType="submit" className="login-form-button">
                     Log in
                 </Button>
-                Or <a href="/user/register">register now!</a>
+                Or <a href={"/user/register"}>register now!</a>
             </Form.Item>
 
             <FacebookLogin

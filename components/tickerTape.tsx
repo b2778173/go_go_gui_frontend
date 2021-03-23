@@ -7,7 +7,7 @@ function TickerTape() {
     if (document.getElementById("chart")) {
       const script = document.createElement("script")
       script.src =
-        "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+        "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"!
       script.async = true
       script.innerHTML = JSON.stringify({
         symbols: [
@@ -36,7 +36,7 @@ function TickerTape() {
         isTransparent: false,
         displayMode: "adaptive",
         locale: "in"
-      })
+      })!
       if (!document.getElementById("chart")!.childNodes.length) {
         document.getElementById("chart")!.appendChild(script)
       }

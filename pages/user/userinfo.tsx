@@ -38,9 +38,7 @@ class ProfileImg extends React.Component<any, any>{
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         }).then(async res => {
-            let response = {
-                results:[]
-            };
+            let response: { results: any[] };
 
             response = await res.json();
 
@@ -50,10 +48,10 @@ class ProfileImg extends React.Component<any, any>{
                 initLoading: false,
                 data: response.results,
                 userInfo: userInfo,
-                name: userInfo.name,
-                location: userInfo.location,
-                email: userInfo.email,
-                picture: userInfo.picture,
+                name: userInfo["name"],
+                location: userInfo["location"],
+                email: userInfo["email"],
+                picture: userInfo["picture"],
             });
         });
     }
