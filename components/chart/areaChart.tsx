@@ -2,6 +2,7 @@ import { scaleTime } from "d3-scale"
 import { ChartCanvas, Chart } from "react-stockcharts"
 import { AreaSeries } from "react-stockcharts/lib/series"
 import { XAxis, YAxis } from "react-stockcharts/lib/axes"
+import { fitWidth } from "react-stockcharts/lib/helper"
 import {
   createVerticalLinearGradient,
   hexToRGBA
@@ -16,12 +17,15 @@ const canvasGradient = createVerticalLinearGradient([
 ])
 function AreaChart(props: {
   data: any
-  type: string
-  width: number
-  height: number
-  ratio: number
-}) {
-  const { data, type, width, height, ratio } = props
+  type?: string
+  // eslint-disable-next-line react/require-default-props
+  width?: number
+  height?: number
+  ratio?: number
+  xExtents?: [Date, Date]
+}): any {
+  const { data, type, width, height, ratio, xExtents } = props
+  // console.log(data, type, width, height, ratio, xExtents)
   useEffect(() => {})
   return (
     <ChartCanvas
@@ -36,8 +40,7 @@ function AreaChart(props: {
       displayXAccessor={(d: any) => d.date}
       xScale={scaleTime()}
       zoomEvent={false}
-      // xExtents={[new Date(1614590862), new Date(1614936462)]}
-    >
+      xExtents={xExtents}>
       {console.log("area chart render")}
       <Chart id={0} yExtents={(d: any) => d.close}>
         <defs>
@@ -60,5 +63,13 @@ function AreaChart(props: {
     </ChartCanvas>
   )
 }
-
+/* tslint:disable-next-line */
+AreaChart = fitWidth(AreaChart)
+AreaChart.defaultProps = {
+  type: "svg",
+  // width: true,
+  height: 200,
+  ratio: 1,
+  xExtents: undefined
+}
 export default AreaChart
