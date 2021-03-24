@@ -35,6 +35,7 @@
       1,
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
     ],
+    // warn rather than error
     "no-unused-vars": "warn",
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/no-unused-vars": ["warn"]

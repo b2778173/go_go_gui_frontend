@@ -3,11 +3,11 @@ import React, { useEffect } from "react"
 function TickerTape() {
   useEffect(() => {
     // componentDidMounted && componentDidUpdate
-
-    if (document.getElementById("chart")) {
+    const chart: HTMLElement | null = document.getElementById("chart")
+    if (chart) {
       const script = document.createElement("script")
       script.src =
-        "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"!
+        "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
       script.async = true
       script.innerHTML = JSON.stringify({
         symbols: [
@@ -36,9 +36,9 @@ function TickerTape() {
         isTransparent: false,
         displayMode: "adaptive",
         locale: "in"
-      })!
-      if (!document.getElementById("chart")!.childNodes.length) {
-        document.getElementById("chart")!.appendChild(script)
+      })
+      if (!chart.childNodes.length) {
+        chart.appendChild(script)
       }
     }
     // componentDidUpdate && componentWillUnmount
