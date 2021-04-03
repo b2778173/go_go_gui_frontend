@@ -4,9 +4,9 @@
     "license": "ISC",
     "private": true,
     "scripts": {
-        "dev": "next dev",
+        "dev": "yarn lint & next dev",
         "build": "next build",
-        "start": "yarn lint & yarn dev",
+        "start": "next start -p $PORT",
         "lint": "eslint components/* pages/*",
         "postinstall": "husky install",
         "type-check": "tsc --project tsconfig.json --pretty --noEmit",
