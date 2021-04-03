@@ -9,7 +9,8 @@
         "start": "yarn lint & yarn dev",
         "lint": "eslint components/* pages/*",
         "postinstall": "husky install",
-        "type-check": "tsc --project tsconfig.json --pretty --noEmit"
+        "type-check": "tsc --project tsconfig.json --pretty --noEmit",
+        "heroku-postbuild": "yarn build"
     },
     "dependencies": {
         "@ant-design/icons": "^4.5.0",
