@@ -38,7 +38,9 @@
         "react-facebook-login": "^4.1.1",
         "react-stockcharts": "^0.7.8",
         "sass": "^1.32.8",
-        "scss": "^0.2.4"
+        "scss": "^0.2.4",
+        "@types/node": "^14.14.30",
+        "@types/react": "^17.0.2"
     },
     "devDependencies": {
         "@types/d3-dsv": "^2.0.1",
