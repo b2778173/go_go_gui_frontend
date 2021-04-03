@@ -13,6 +13,8 @@ const request = axios.create({
 // Add a request interceptor
 request.interceptors.request.use(
   (config: any) => {
+    // console.log(process.env)
+    console.log(process.env.FLASK_API_BASE)
     // Do something before request is sent
     return config
   },
