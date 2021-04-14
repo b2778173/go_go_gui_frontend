@@ -67,14 +67,16 @@ function NavBar(props: { showTickerTap: boolean }) {
   return (
     <>
       <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
-        <Menu.Item
-          key="favicon"
-          icon={<MailOutlined />}
-          style={{ width: "20%" }}>
-          {/* Overview */}這裡放股咕雞圖
+        <Menu.Item key="favicon" style={{ width: "20%" }}>
+          {/* Overview */}
+          <img
+            src="/logo_stocken.svg"
+            alt="stocken Logo"
+            className={styles.logo}
+          />
         </Menu.Item>
         <Menu.Item key="mail" icon={<MailOutlined />}>
-          Overview
+          OVERVIEW
         </Menu.Item>
         <Menu.Item key="app" icon={<AppstoreOutlined />}>
           <Watchlist />
@@ -93,7 +95,7 @@ function NavBar(props: { showTickerTap: boolean }) {
           </Menu.ItemGroup>
         </SubMenu> */}
         <Menu.Item key="alipay">
-          <Link href="/">Position</Link>
+          <Link href="/">POSITION</Link>
         </Menu.Item>
         <Menu.Item className={styles.noUnderline}>
           {/* <Input.Group> */}
