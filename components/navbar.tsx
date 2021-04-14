@@ -15,7 +15,6 @@ import TickerTape from "./tickerTape"
 
 import Watchlist from "./watchlist/watchlist"
 
-
 function NavBar(props: { showTickerTap: boolean }) {
   const { showTickerTap } = props
   const [current, changeCurrent] = useState("mail")
@@ -78,7 +77,7 @@ function NavBar(props: { showTickerTap: boolean }) {
           Overview
         </Menu.Item>
         <Menu.Item key="app" icon={<AppstoreOutlined />}>
-          <Watchlist></Watchlist>
+          <Watchlist />
         </Menu.Item>
         {/* <SubMenu
           key="SubMenu"
