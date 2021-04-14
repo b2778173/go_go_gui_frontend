@@ -2,14 +2,29 @@ import { Form, Input, Button, Checkbox, message } from "antd"
 import { UserOutlined, LockOutlined } from "@ant-design/icons"
 import Router from "next/router"
 import React, { useState, useEffect } from "react"
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
 
 import FacebookLogin from "react-facebook-login"
 import firebase from "firebase/app"
-import styles from "../../styles/Home.module.scss"
 import "firebase/auth"
 
+import styles from "../../styles/Home.module.scss"
+
 export default function Login() {
-  const onFinish = async (values: any) => {
+  // Local signed-in state.
+  const [isSignedIn, setIsSignedIn] = useState(false)
+  const [accessToken, setAccessToken] = useState("")
+
+  const setToken = async (user: any) => {
+    const idToken = await user.getIdToken()
+    sessionStorage.setItem("idToken", idToken)
+  }
+
+  const deletToken = async () => {
+    sessionStorage.removeItem("idToken")
+  }
+
+  const onLoginIn = async (values: any) => {
     console.log("Received values of form: ", values)
     // const user = {
     //   username: values.username,
@@ -28,61 +43,24 @@ export default function Login() {
         // Signed in
         const { user } = userCredential
         if (user) {
-          const idToken = await user.getIdToken()
-          // const idToken = await firebase.auth().currentUser.getIdToken()
-          sessionStorage.setItem("idToken", idToken)
+          setToken(user)
           Router.push("/")
         }
       })
       .catch((error) => {
-        console.log(error)
         message.error(error.code, 3)
       })
-
-    // firebase
-    //   .auth()
-    //   .setPersistence(firebase.auth.Auth.Persistence.SESSION)
-    //   .then(() => {
-    //     // Existing and future Auth states are now persisted in the current
-    //     // session only. Closing the window would clear any existing state even
-    //     // if a user forgets to sign out.
-    //     // ...
-    //     // New sign-in will be persisted with session persistence.
-    //     return firebase
-    //       .auth()
-    //       .signInWithEmailAndPassword(values.username, values.password)
-    //   })
-    //   .catch((error) => {
-    //     // Handle Errors here.
-    //     message.error(error.message, 3)
-    //     console.log(error)
-    //     const errorCode = error.code
-    //     const errorMessage = error.message
-    //   })
-
-    // firebase
-    //   .auth()
-    //   .currentUser.getIdToken()
-    //   .then((idToken) => {
-    //     // idToken can be passed back to server.
-    //     sessionStorage.setItem("idToken", idToken)
-    //   })
-    //   .catch((error) => {
-    //     // Error occurred.
-    //   })
   }
 
-  const [accessToken, setAccessToken] = useState("")
-  const componentClicked = (data: any) => {
-    console.log(data)
-  }
-  const responseFacebook = (response: any) => {
-    console.log(response)
-    console.log(accessToken)
-    setAccessToken(response.accessToken)
-  }
-  useEffect(() => {
-    // Initialize Firebase
+  // const componentClicked = (data: any) => {
+  //   console.log(data)
+  // }
+  // const responseFacebook = (response: any) => {
+  //   console.log(response)
+  //   console.log(accessToken)
+  //   setAccessToken(response.accessToken)
+  // }
+  const initFirebase = () => {
     const firebaseConfig = {
       apiKey: "AIzaSyAxiEDjs74HK4zqV6hWO_Zdz95J8DLHboI",
       authDomain: "go-go-gui.firebaseapp.com",
@@ -95,73 +73,137 @@ export default function Login() {
 
     // init firebase
     if (!firebase.apps.length) {
-      console.log(1)
       firebase.initializeApp(firebaseConfig)
     } else {
-      console.log(2)
       firebase.app() // if already initialized, use that one
     }
+  }
+
+  // Initialize Firebase with project config at the beginning
+  initFirebase()
+
+  const uiConfig = {
+    // Popup signin flow rather than redirect flow.
+    signInFlow: "popup",
+    // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
+    signInSuccessUrl: "/",
+    // We will display Google and Facebook as auth providers.
+    signInOptions: [
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID
+    ]
+  }
+
+  // componentDidMounted
+  useEffect(() => {
+    // check login status is ture , redirct to home page
+    const idToken = sessionStorage.getItem("idToken")
+    if (idToken) {
+      Router.push("/")
+    }
+    // Listen to the Firebase Auth state and set the local state.
+    const unregisterAuthObserver = firebase
+      .auth()
+      .onAuthStateChanged((user) => {
+        console.log(`onAuthStateChanged`)
+        setIsSignedIn(!!user)
+        if (user) {
+          setToken(user)
+        } else {
+          deletToken()
+        }
+      })
+    // Make sure we un-register Firebase observers when the component unmounts.
+    return () => unregisterAuthObserver()
   }, [])
 
   return (
-    <Form
-      name="normal_login"
-      className={styles.container}
-      initialValues={{
-        remember: true
-      }}
-      onFinish={onFinish}>
-      <Form.Item
-        name="username"
-        rules={[
-          {
-            required: true,
-            message: "Please input your Username!"
-          }
-        ]}>
-        <Input
-          prefix={<UserOutlined className="site-form-item-icon" />}
-          placeholder="Username"
-        />
-      </Form.Item>
-      <Form.Item
-        name="password"
-        rules={[
-          {
-            required: true,
-            message: "Please input your Password!"
-          }
-        ]}>
-        <Input
-          prefix={<LockOutlined className="site-form-item-icon" />}
-          type="password"
-          placeholder="Password"
-        />
-      </Form.Item>
-      <Form.Item>
-        <Form.Item name="remember" valuePropName="checked" noStyle>
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
+    <>
+      <div className={styles.container}>
+        <h1>Welcom to GO-GO-GUI</h1>
+        {!isSignedIn ? (
+          <Form
+            name="normal_login"
+            initialValues={{
+              remember: true
+            }}
+            onFinish={onLoginIn}>
+            <p>Please sign-in:</p>
+            <Form.Item
+              name="username"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Username!"
+                }
+              ]}>
+              <Input
+                prefix={<UserOutlined className="site-form-item-icon" />}
+                placeholder="Username"
+              />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Password!"
+                }
+              ]}>
+              <Input
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Form.Item name="remember" valuePropName="checked" noStyle>
+                <Checkbox>Remember me</Checkbox>
+              </Form.Item>
 
-        <a className="login-form-forgot" href="">
-          Forgot password
-        </a>
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit" className="login-form-button">
-          Log in
-        </Button>
-        Or <a href="/user/register">register now!</a>
-      </Form.Item>
-      <FacebookLogin
-        appId="479394116407879"
-        autoLoad
-        fields="name,email,picture"
-        onClick={componentClicked}
-        callback={responseFacebook}
-      />
-      ,
-    </Form>
+              <a className="login-form-forgot" href="">
+                Forgot password
+              </a>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={styles.loginFormButton}>
+                Log in
+              </Button>
+              Or <a href="/user/register">register now!</a>
+            </Form.Item>
+            {/* fb login */}
+            {/* <FacebookLogin
+              appId="479394116407879"
+              autoLoad
+              fields="name,email,picture"
+              onClick={componentClicked}
+              callback={responseFacebook}
+            /> */}
+
+            {/* fb, google login */}
+            <div>
+              <StyledFirebaseAuth
+                uiConfig={uiConfig}
+                firebaseAuth={firebase.auth()}
+              />
+            </div>
+          </Form>
+        ) : (
+          <div>
+            <p>
+              Welcome {firebase.auth().currentUser?.displayName}! You are now
+              signed-in!
+            </p>
+            <Button type="link" onClick={() => firebase.auth().signOut()}>
+              Sign-out
+            </Button>
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 

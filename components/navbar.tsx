@@ -7,8 +7,11 @@ import {
   DownOutlined
 } from "@ant-design/icons"
 import React, { useState } from "react"
+import firebase from "firebase/app"
+import "firebase/auth"
 
 import Link from "next/link"
+import Router from "next/router"
 import styles from "./styles/navbar.module.css"
 
 import TickerTape from "./tickerTape"
@@ -18,6 +21,43 @@ import Watchlist from "./watchlist/watchlist"
 function NavBar(props: { showTickerTap: boolean }) {
   const { showTickerTap } = props
   const [current, changeCurrent] = useState("mail")
+
+  const initFirebase = () => {
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxiEDjs74HK4zqV6hWO_Zdz95J8DLHboI",
+      authDomain: "go-go-gui.firebaseapp.com",
+      projectId: "go-go-gui",
+      storageBucket: "go-go-gui.appspot.com",
+      messagingSenderId: "474218867220",
+      appId: "1:474218867220:web:14139bf3599c640dbf5501",
+      measurementId: "G-NFBWXVTVB7"
+    }
+
+    // init firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig)
+    } else {
+      firebase.app() // if already initialized, use that one
+    }
+  }
+
+  // Initialize Firebase with project config at the beginning
+  initFirebase()
+
+  // handler
+  const handleClick = (e: any) => {
+    // console.log(e)
+    changeCurrent(e.key)
+  }
+  const onSearch = (value: string) => {
+    // console.log(value)
+  }
+
+  const logout = () => {
+    sessionStorage.removeItem("idToken")
+    firebase.auth().signOut()
+    Router.push("/user/login")
+  }
 
   // component
   // const { SubMenu } = Menu
@@ -46,7 +86,9 @@ function NavBar(props: { showTickerTap: boolean }) {
           3rd menu item
         </a>
       </Menu.Item>
-      <Menu.Item danger>a danger item</Menu.Item>
+      <Menu.Item danger onClick={logout}>
+        Log out
+      </Menu.Item>
     </Menu>
   )
 
@@ -54,14 +96,6 @@ function NavBar(props: { showTickerTap: boolean }) {
   const styleAvatar = {
     display: "inline-flex",
     float: "right"
-  }
-  // handler
-  const handleClick = (e: any) => {
-    // console.log(e)
-    changeCurrent(e.key)
-  }
-  const onSearch = (value: string) => {
-    // console.log(value)
   }
 
   return (
