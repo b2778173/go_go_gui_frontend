@@ -14,6 +14,8 @@ const request = axios.create({
 request.interceptors.request.use(
   (config: any) => {
     // Do something before request is sent
+    const idToken = sessionStorage.getItem("idToken")
+    config.headers.idToken = idToken
     return config
   },
   (error: any) => {
