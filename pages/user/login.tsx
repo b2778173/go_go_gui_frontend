@@ -4,16 +4,15 @@ import Router from "next/router"
 import React, { useState, useEffect } from "react"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
 
-import FacebookLogin from "react-facebook-login"
 import firebase from "firebase/app"
 import "firebase/auth"
+import "../../util/firebase"
 
 import styles from "../../styles/Home.module.scss"
 
 export default function Login() {
   // Local signed-in state.
   const [isSignedIn, setIsSignedIn] = useState(false)
-  const [accessToken, setAccessToken] = useState("")
 
   const setToken = async (user: any) => {
     const idToken = await user.getIdToken()
@@ -52,36 +51,6 @@ export default function Login() {
       })
   }
 
-  // const componentClicked = (data: any) => {
-  //   console.log(data)
-  // }
-  // const responseFacebook = (response: any) => {
-  //   console.log(response)
-  //   console.log(accessToken)
-  //   setAccessToken(response.accessToken)
-  // }
-  const initFirebase = () => {
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxiEDjs74HK4zqV6hWO_Zdz95J8DLHboI",
-      authDomain: "go-go-gui.firebaseapp.com",
-      projectId: "go-go-gui",
-      storageBucket: "go-go-gui.appspot.com",
-      messagingSenderId: "474218867220",
-      appId: "1:474218867220:web:14139bf3599c640dbf5501",
-      measurementId: "G-NFBWXVTVB7"
-    }
-
-    // init firebase
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig)
-    } else {
-      firebase.app() // if already initialized, use that one
-    }
-  }
-
-  // Initialize Firebase with project config at the beginning
-  initFirebase()
-
   const uiConfig = {
     // Popup signin flow rather than redirect flow.
     signInFlow: "popup",
@@ -105,7 +74,7 @@ export default function Login() {
     const unregisterAuthObserver = firebase
       .auth()
       .onAuthStateChanged((user) => {
-        console.log(`onAuthStateChanged`)
+        // console.log(`onAuthStateChanged`)
         setIsSignedIn(!!user)
         if (user) {
           setToken(user)

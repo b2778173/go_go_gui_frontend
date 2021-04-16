@@ -6,7 +6,7 @@ import Router from "next/router"
 
 // const accessToken = Cookies.get("Authorization")
 const request = axios.create({
-  baseURL: process.env.FLASK_API_BASE,
+  baseURL: process.env.API_BASE_URL,
   headers: {
     "Content-Type": "application/json"
   }

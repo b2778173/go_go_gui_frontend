@@ -1,5 +1,5 @@
+import axios from "axios"
 import request from "./request"
-import axios from "axios";
 
 export function getAllWatchlist(): Promise<any> {
   const url = `/watchlist`
@@ -11,7 +11,7 @@ export function quote(symbols: string[]): Promise<any> {
   return request.post(url, { symbols })
 }
 
-//Add watchlist
+// Add watchlist
 export function addWatchlist(symbols: string[]): Promise<any> {
   const url = `/add_watchlist`
   return request.post(url, { symbols })
@@ -22,6 +22,3 @@ export function mockSymbolList(): Promise<any> {
   const url = `https://financialmodelingprep.com/api/v3/search?query=AA&limit=10&exchange=NASDAQ&apikey=demo`
   return axios.get(url)
 }
-
-
-
