@@ -5,7 +5,7 @@ import { QuestionCircleOutlined } from "@ant-design/icons"
 import axios from "axios"
 import Router from "next/router"
 import styles from "../../styles/Home.module.scss"
-import { Url } from "../../constant/urlConstant"
+// import { Url } from "../../constant/urlConstant"
 
 const { Option } = Select
 
@@ -61,11 +61,6 @@ export default function Register() {
         }
       ]
     }
-    console.log("userInfo", userInfo)
-    await axios.post(`${Url.LOCAL}/create_user`, userInfo).then((res) => {
-      console.log("res", res)
-      Router.push("/user/login")
-    })
   }
 
   return (
