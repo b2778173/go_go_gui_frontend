@@ -8,7 +8,7 @@ module.exports = (phase, { defaultConfig }) => {
     return {
       /* development only config options here */
       env: {
-        API_BASE_URL: "http://localhost:5000"
+        API_BASE_URL: "http://localhost:5555/api"
       }
     }
   }

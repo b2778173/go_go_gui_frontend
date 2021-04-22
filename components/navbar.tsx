@@ -10,13 +10,10 @@ import React, { useState } from "react"
 import "../util/firebase"
 import firebase from "firebase/app"
 import "firebase/auth"
-
 import Link from "next/link"
 import Router from "next/router"
 import styles from "./styles/navbar.module.css"
-
 import TickerTape from "./tickerTape"
-
 import Watchlist from "./watchlist/watchlist"
 
 function NavBar(props: { showTickerTap: boolean }) {
@@ -135,7 +132,7 @@ function NavBar(props: { showTickerTap: boolean }) {
                   icon={<UserOutlined />}
                   className={styles.avatar}
                 />
-                name111 <DownOutlined />
+                {firebase.auth().currentUser?.displayName} <DownOutlined />
               </a>
             </div>
           </Dropdown>
