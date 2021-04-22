@@ -68,7 +68,7 @@ export default function Login() {
     // check login status is ture , redirct to home page
     const idToken = sessionStorage.getItem("idToken")
     if (idToken) {
-      Router.push("/")
+      // Router.push("/")
     }
     // Listen to the Firebase Auth state and set the local state.
     const unregisterAuthObserver = firebase

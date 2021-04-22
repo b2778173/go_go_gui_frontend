@@ -109,13 +109,13 @@ function Home() {
       ]: // dayMoverRespose
       any = await Promise.all(fetchApi)
 
-      console.log(
-        dowResponse,
-        spyResponse,
-        ndxResponse,
-        newsResponse
-        // dayMoverRespose
-      )
+      // console.log(
+      //   dowResponse,
+      //   spyResponse,
+      //   ndxResponse,
+      //   newsResponse
+      //   // dayMoverRespose
+      // )
       setDow(dowResponse)
       setSP(spyResponse)
       setNasdaq(ndxResponse)

@@ -10,6 +10,6 @@ export function companyNews(
   from: string,
   to: string
 ): Promise<any> {
-  const url = `/company_news?symbol=${symbol}&from=${from}&to=${to}`
+  const url = `/news/company_news?symbol=${symbol}&from=${from}&to=${to}`
   return request.get(url)
 }

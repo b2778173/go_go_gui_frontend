@@ -1,6 +1,9 @@
 import axios from "axios"
 import { message } from "antd"
 import Router from "next/router"
+import "../util/firebase"
+import firebase from "firebase/app"
+import "firebase/auth"
 
 // import Cookies from "js-cookie"
 
@@ -13,25 +16,29 @@ const request = axios.create({
 })
 // Add a request interceptor
 request.interceptors.request.use(
-  (config: any) => {
+  async (config: any) => {
     // Do something before request is sent
     const { CancelToken } = axios
     const source = CancelToken.source()
     config.cancelToken = source.token
     // get token from Storage
-    const idToken = sessionStorage.getItem("idToken")
-    if (idToken) {
-      config.headers.idToken = idToken
-    } else {
-      // cancel req with no error message
-      source.cancel()
-      Router.push("/user/login")
-    }
+    // const idToken = sessionStorage.getItem("idToken")
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        // User is signed in.
+        const idToken = await user.getIdToken()
+        sessionStorage.setItem("idToken", idToken)
+      } else {
+        // No user is signed in.
+        source.cancel()
+        Router.push("/user/login")
+      }
+    })
+    config.headers.idToken = sessionStorage.getItem("idToken")
     return config
   },
   (error: any) => {
     // Do something with request error
-    console.log(222)
     return Promise.reject(error)
   }
 )
