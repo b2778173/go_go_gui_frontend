@@ -7,17 +7,33 @@ import {
   DownOutlined
 } from "@ant-design/icons"
 import React, { useState } from "react"
-
+import "../util/firebase"
+import firebase from "firebase/app"
+import "firebase/auth"
 import Link from "next/link"
+import Router from "next/router"
 import styles from "./styles/navbar.module.css"
-
 import TickerTape from "./tickerTape"
-
 import Watchlist from "./watchlist/watchlist"
 
 function NavBar(props: { showTickerTap: boolean }) {
   const { showTickerTap } = props
   const [current, changeCurrent] = useState("mail")
+
+  // handler
+  const handleClick = (e: any) => {
+    // console.log(e)
+    changeCurrent(e.key)
+  }
+  const onSearch = (value: string) => {
+    // console.log(value)
+  }
+
+  const logout = () => {
+    sessionStorage.removeItem("idToken")
+    firebase.auth().signOut()
+    Router.push("/user/login")
+  }
 
   // component
   // const { SubMenu } = Menu
@@ -46,7 +62,9 @@ function NavBar(props: { showTickerTap: boolean }) {
           3rd menu item
         </a>
       </Menu.Item>
-      <Menu.Item danger>a danger item</Menu.Item>
+      <Menu.Item danger onClick={logout}>
+        Log out
+      </Menu.Item>
     </Menu>
   )
 
@@ -54,14 +72,6 @@ function NavBar(props: { showTickerTap: boolean }) {
   const styleAvatar = {
     display: "inline-flex",
     float: "right"
-  }
-  // handler
-  const handleClick = (e: any) => {
-    // console.log(e)
-    changeCurrent(e.key)
-  }
-  const onSearch = (value: string) => {
-    // console.log(value)
   }
 
   return (
@@ -124,7 +134,7 @@ function NavBar(props: { showTickerTap: boolean }) {
                   icon={<UserOutlined />}
                   className={styles.avatar}
                 />
-                name111 <DownOutlined />
+                {firebase.auth().currentUser?.displayName} <DownOutlined />
               </a>
             </div>
           </Dropdown>

@@ -419,13 +419,6 @@ function Home() {
 
   return (
     <div className={styles.container}>
-      {/* {console.log("feedNews", feedNews)}
-      {console.log("forexNews", forexNews)} */}
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <main className={styles.main}>
         <>
           <div className={styles.content}>

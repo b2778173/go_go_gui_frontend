@@ -16,17 +16,17 @@ function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     router.events.on("routeChangeStart", (url) => {
       setLoading(true)
-      console.log(`Loading: ${url}`)
+      // console.log(`Loading: ${url}`)
       NProgress.start()
     })
     router.events.on("routeChangeComplete", () => {
       setLoading(false)
-      console.log("routeChangeComplete")
+      // console.log("routeChangeComplete")
       NProgress.done()
     })
     router.events.on("routeChangeError", () => {
       setLoading(false)
-      console.log("routeChangeError")
+      // console.log("routeChangeError")
       NProgress.done()
     })
     return () => {}
