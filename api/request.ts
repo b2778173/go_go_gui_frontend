@@ -41,7 +41,7 @@ request.interceptors.response.use(
   (response: any) => {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
-    return response.data
+    return response.data.result
   },
   (error: any) => {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
