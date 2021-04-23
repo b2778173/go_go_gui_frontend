@@ -34,6 +34,7 @@
         "js-cookie": "^2.2.1",
         "moment": "^2.29.1",
         "next": "10.0.7",
+        "next-redux-wrapper": "^6.0.2",
         "nprogress": "^0.2.0",
         "prettier": "^2.2.1",
         "react": "17.0.1",

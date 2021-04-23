@@ -2,15 +2,16 @@
 import "../styles/globals.css"
 import "antd/dist/antd.css"
 import { AppProps } from "next/app"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, FC } from "react"
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
 import { useRouter } from "next/router"
 import { Spin } from "antd"
 import AppContainer from "../components/app-container"
 import NavBar from "../components/navbar"
+import { wrapper } from "../store"
 
-function App({ Component, pageProps }: AppProps) {
+function WrappedApp({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   useEffect(() => {
@@ -47,4 +48,4 @@ function App({ Component, pageProps }: AppProps) {
   )
 }
 
-export default App
+export default wrapper.withRedux(WrappedApp)

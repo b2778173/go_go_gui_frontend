@@ -8,6 +8,9 @@ import firebase from "firebase/app"
 import "firebase/auth"
 import "../../util/firebase"
 
+import { useSelector } from "react-redux"
+import { wrapper, State } from "../../store"
+
 import styles from "../../styles/Home.module.scss"
 
 export default function Login() {
@@ -25,15 +28,6 @@ export default function Login() {
 
   const onLoginIn = async (values: any) => {
     console.log("Received values of form: ", values)
-    // const user = {
-    //   username: values.username,
-    //   password: values.password
-    // }
-    // await axios.post(`${Url.LOCAL}/auth`, user).then((res) => {
-    //   console.log("res", res)
-    //   localStorage.setItem("token", res.data.access_token)
-    //   Router.push("/")
-    // })
 
     firebase
       .auth()
@@ -62,6 +56,10 @@ export default function Login() {
       firebase.auth.FacebookAuthProvider.PROVIDER_ID
     ]
   }
+
+  const { isSigned } = useSelector<State, State>((state: State) => state)
+  console.log(useSelector<State, State>((state: State) => state))
+  console.log(wrapper)
 
   // componentDidMounted
   useEffect(() => {

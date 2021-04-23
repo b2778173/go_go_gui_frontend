@@ -23,18 +23,25 @@ request.interceptors.request.use(
     config.cancelToken = source.token
     // get token from Storage
     // const idToken = sessionStorage.getItem("idToken")
+    // const token = () =>
+    // new Promise((resolve, reject) => {
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
         // User is signed in.
         const idToken = await user.getIdToken()
         sessionStorage.setItem("idToken", idToken)
+        // resolve(idToken)
       } else {
         // No user is signed in.
         source.cancel()
         Router.push("/user/login")
+        // reject()
       }
     })
+    // })
+
     config.headers.idToken = sessionStorage.getItem("idToken")
+    // config.headers.idToken = await token()
     return config
   },
   (error: any) => {

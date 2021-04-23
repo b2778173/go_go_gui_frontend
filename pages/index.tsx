@@ -202,7 +202,7 @@ function Home() {
     const response = await Promise.all(data)
     setUNews(response[0].concat(response[1]).concat(response[2]))
   }
-  const onTabChange = async (key: any) => {
+  const onTabChange = async (key: string) => {
     setTab(key)
     setLoading(true)
     let response = null
@@ -529,9 +529,7 @@ function Home() {
                 {/* position */}
                 <Card bodyStyle={{ padding: 0 }}>
                   <Table columns={positionColumns} dataSource={[]} />
-                  <Button style={{ width: "100%" }} type="dashed">
-                    + Add Position
-                  </Button>
+                  <Button type="dashed">+ Add Position</Button>
                 </Card>
               </Col>
 
