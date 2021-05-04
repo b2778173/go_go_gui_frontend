@@ -22,7 +22,14 @@
     "prettier/prettier": [
       "error",
       {
-        "endOfLine": "auto"
+        "endOfLine": "auto",
+        "singleQuote": false,
+        "trailingComma": "none",
+        "jsxBracketSameLine": true,
+        "printWidth": 80,
+        "tabWidth": 2,
+        "useTabs": false,
+        "semi": false
       }
     ],
     // disable the rule for all files
@@ -39,14 +46,17 @@
     "no-unused-vars": "warn",
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/no-unused-vars": ["warn"]
-
   },
   "overrides": [
     {
       // enable the rule specifically for TypeScript files
       "files": ["*.js", "*.ts"],
       "rules": {
-        "@typescript-eslint/explicit-module-boundary-types": "warn"
+        "@typescript-eslint/explicit-module-boundary-types": "warn",
+        "no-param-reassign": [
+          "error",
+          { "props": true, "ignorePropertyModificationsFor": ["config"] }
+        ]
       }
     }
   ]

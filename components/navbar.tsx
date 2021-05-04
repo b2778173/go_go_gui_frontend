@@ -7,18 +7,33 @@ import {
   DownOutlined
 } from "@ant-design/icons"
 import React, { useState } from "react"
-
+import "../util/firebase"
+import firebase from "firebase/app"
+import "firebase/auth"
 import Link from "next/link"
+import Router from "next/router"
 import styles from "./styles/navbar.module.css"
-
 import TickerTape from "./tickerTape"
-
 import Watchlist from "./watchlist/watchlist"
-
 
 function NavBar(props: { showTickerTap: boolean }) {
   const { showTickerTap } = props
   const [current, changeCurrent] = useState("mail")
+
+  // handler
+  const handleClick = (e: any) => {
+    // console.log(e)
+    changeCurrent(e.key)
+  }
+  const onSearch = (value: string) => {
+    // console.log(value)
+  }
+
+  const logout = () => {
+    sessionStorage.removeItem("idToken")
+    firebase.auth().signOut()
+    Router.push("/user/login")
+  }
 
   // component
   // const { SubMenu } = Menu
@@ -47,7 +62,9 @@ function NavBar(props: { showTickerTap: boolean }) {
           3rd menu item
         </a>
       </Menu.Item>
-      <Menu.Item danger>a danger item</Menu.Item>
+      <Menu.Item danger onClick={logout}>
+        Log out
+      </Menu.Item>
     </Menu>
   )
 
@@ -56,29 +73,23 @@ function NavBar(props: { showTickerTap: boolean }) {
     display: "inline-flex",
     float: "right"
   }
-  // handler
-  const handleClick = (e: any) => {
-    // console.log(e)
-    changeCurrent(e.key)
-  }
-  const onSearch = (value: string) => {
-    // console.log(value)
-  }
 
   return (
     <>
       <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
-        <Menu.Item
-          key="favicon"
-          icon={<MailOutlined />}
-          style={{ width: "20%" }}>
-          {/* Overview */}這裡放股咕雞圖
+        <Menu.Item key="favicon" style={{ width: "20%" }}>
+          {/* Overview */}
+          <img
+            src="/logo_stocken.svg"
+            alt="stocken Logo"
+            className={styles.logo}
+          />
         </Menu.Item>
         <Menu.Item key="mail" icon={<MailOutlined />}>
-          Overview
+          OVERVIEW
         </Menu.Item>
         <Menu.Item key="app" icon={<AppstoreOutlined />}>
-          <Watchlist></Watchlist>
+          <Watchlist />
         </Menu.Item>
         {/* <SubMenu
           key="SubMenu"
@@ -94,7 +105,7 @@ function NavBar(props: { showTickerTap: boolean }) {
           </Menu.ItemGroup>
         </SubMenu> */}
         <Menu.Item key="alipay">
-          <Link href="/">Position</Link>
+          <Link href="/">POSITION</Link>
         </Menu.Item>
         <Menu.Item className={styles.noUnderline}>
           {/* <Input.Group> */}
@@ -123,7 +134,7 @@ function NavBar(props: { showTickerTap: boolean }) {
                   icon={<UserOutlined />}
                   className={styles.avatar}
                 />
-                name111 <DownOutlined />
+                {firebase.auth().currentUser?.displayName} <DownOutlined />
               </a>
             </div>
           </Dropdown>

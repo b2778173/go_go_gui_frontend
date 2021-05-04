@@ -2,12 +2,13 @@ import Head from "next/head"
 import React, { useState, useEffect } from "react"
 import { Card, Skeleton, Table, Row, Col, Radio, Button } from "antd"
 import { ColumnsType } from "antd/es/table"
-import { SyncOutlined } from "@ant-design/icons"
+// import { SyncOutlined } from "@ant-design/icons"
 import moment from "moment"
 import styles from "../styles/Home.module.scss"
 import Footer from "../components/footer"
 // import Chart from "../components/chart/chart"
 import AreaChart from "../components/chart/areaChart"
+import MoverBlock from "../components/moverBlock"
 // import getData from "./api/test"
 import { marketNews, companyNews } from "../api/news"
 import getAreaChartData from "../api/chart"
@@ -19,6 +20,23 @@ function Home() {
   const [dowData, setDow] = useState(null)
   const [spData, setSP] = useState(null)
   const [nasdaqData, setNasdaq] = useState(null)
+
+  const [dowBtn, setDowBtn] = useState("1Y")
+  const [spBtn, setSpBtn] = useState("1Y")
+  const [ndxBtn, setNdxBtn] = useState("1Y")
+
+  const [dowXExtents, setDowXExtents]: [
+    [Date, Date] | undefined,
+    any
+  ] = useState(undefined)
+  const [spXExtents, setSpXExtents]: [[Date, Date] | undefined, any] = useState(
+    undefined
+  )
+  const [nasdaqXExtents, setNasdaqXExtents]: [
+    [Date, Date] | undefined,
+    any
+  ] = useState(undefined)
+
   const [feedNews, setFeedNews] = useState([])
   const [forexNews, setForexNews] = useState([])
   const [cyptoNews, setCyptoNews] = useState([])
@@ -66,47 +84,47 @@ function Home() {
     }
   }
 
-  const oneYearBefore = () => {
+  const twoYearBefore = () => {
     const Y = new Date().getFullYear()
     const M = new Date().getMonth()
     const D = new Date().getDate()
-    return Math.round(new Date(Y - 1, M, D).getTime() / 1000)
+    return Math.round(new Date(Y - 2, M, D).getTime() / 1000)
   }
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
       const fetchApi = [
-        getAreaChartData("DJI", "D", oneYearBefore(), today()),
-        getAreaChartData("SPY", "D", oneYearBefore(), today()),
-        getAreaChartData("NDX", "D", oneYearBefore(), today()),
-        marketNews("general"),
-        dayMover(0, 5)
+        getAreaChartData("DJI", "D", twoYearBefore(), today()),
+        getAreaChartData("SPY", "D", twoYearBefore(), today()),
+        getAreaChartData("NDX", "D", twoYearBefore(), today()),
+        marketNews("general")
+        // dayMover(0, 5)
       ]
 
       const [
         dowResponse,
         spyResponse,
         ndxResponse,
-        newsResponse,
-        dayMoverRespose
-      ]: any = await Promise.all(fetchApi)
+        newsResponse
+      ]: // dayMoverRespose
+      any = await Promise.all(fetchApi)
 
-      console.log(
-        dowResponse,
-        spyResponse,
-        ndxResponse,
-        newsResponse,
-        dayMoverRespose
-      )
+      // console.log(
+      //   dowResponse,
+      //   spyResponse,
+      //   ndxResponse,
+      //   newsResponse
+      //   // dayMoverRespose
+      // )
       setDow(dowResponse)
       setSP(spyResponse)
       setNasdaq(ndxResponse)
       setFeedNews(newsResponse)
       // setMover(dayMoverRespose)
-      const [gainer, loser, activer] = dayMoverRespose.finance.result
-      await setGainer(gainer.quotes)
-      await setLoser(loser.quotes)
-      await setActive(activer.quotes)
+      // const [gainer, loser, activer] = dayMoverRespose.finance.result
+      // await setGainer(gainer.quotes)
+      // await setLoser(loser.quotes)
+      // await setActive(activer.quotes)
       setLoading(false)
     }
     fetchData()
@@ -117,10 +135,57 @@ function Home() {
   const formatTime = (getTime: number): string => {
     return moment(getTime).format("YYYY-MM-DD")
   }
+  const timeShift = (type: string, offset: number): [Date, Date] => {
+    const now = new Date(new Date().setHours(0, 0, 0, 0))
+    const nowY = now.getFullYear()
+    const nowM = now.getMonth()
+    const nowD = now.getDay()
 
+    let from: Date = now
+    const to: Date = now
+    switch (type) {
+      case "D":
+        from = new Date(nowY, nowM, nowD - offset, 0, 0, 0)
+        break
+      case "M":
+        from = new Date(nowY, nowM - offset, nowD, 0, 0, 0)
+        break
+      case "Y":
+        from = new Date(nowY - offset, nowM, nowD, 0, 0, 0)
+        break
+      default:
+      // from = undefined
+    }
+    return [from, to]
+  }
   const handleResolutionChange = (e: any) => {
-    // this.setState({ size: e.target.value });
-    console.log(e)
+    // console.log(e)
+    const btn = e.target.value
+    const { name } = e.target
+
+    let xExtents
+    if (btn === "1D") {
+      xExtents = timeShift("D", 1)
+    } else if (btn === "5D") {
+      xExtents = timeShift("D", 5)
+    } else if (btn === "1M") {
+      xExtents = timeShift("M", 1)
+    } else if (btn === "1Y") {
+      xExtents = timeShift("Y", 1)
+    } else if (btn === "ALL") {
+      xExtents = undefined
+    }
+    console.log("xExtents=", xExtents)
+    if (name === "dow") {
+      setDowBtn(btn)
+      setDowXExtents(xExtents)
+    } else if (name === "sp") {
+      setSpBtn(btn)
+      setSpXExtents(xExtents)
+    } else if (name === "ndx") {
+      setNdxBtn(btn)
+      setNasdaqXExtents(xExtents)
+    }
   }
   const fetchWatchlistNews = async () => {
     const now: number = new Date().getTime() as number
@@ -354,85 +419,66 @@ function Home() {
 
   return (
     <div className={styles.container}>
-      {/* {console.log("feedNews", feedNews)}
-      {console.log("forexNews", forexNews)} */}
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <main className={styles.main}>
         <>
           <div className={styles.content}>
             {/* area chart */}
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Card style={{ minWidth: 400 }}>
+                <Card>
                   {dowData && (
                     <div>
-                      <AreaChart
-                        data={dowData}
-                        type="svg"
-                        width={400}
-                        height={200}
-                        ratio={1}
-                      />
+                      <AreaChart data={dowData} xExtents={dowXExtents} />
                       <Radio.Group
+                        value={dowBtn}
+                        name="dow"
                         onChange={handleResolutionChange}
                         className={styles.resolutionBtn}>
                         <Radio.Button value="1D">1D</Radio.Button>
                         <Radio.Button value="5D">5D</Radio.Button>
                         <Radio.Button value="M">1M</Radio.Button>
-                        <Radio.Button value="6M">6M</Radio.Button>
-                        <Radio.Button value="6M">ALL</Radio.Button>
+                        <Radio.Button value="1Y">1Y</Radio.Button>
+                        <Radio.Button value="ALL">ALL</Radio.Button>
                       </Radio.Group>
                     </div>
                   )}
                 </Card>
               </Col>
               <Col span={8}>
-                <Card style={{ minWidth: 400 }}>
+                <Card>
                   {spData && (
                     <div>
-                      <AreaChart
-                        data={spData}
-                        type="svg"
-                        width={400}
-                        height={200}
-                        ratio={1}
-                      />
+                      <AreaChart data={spData} xExtents={spXExtents} />
                       <Radio.Group
+                        value={spBtn}
+                        name="sp"
                         onChange={handleResolutionChange}
                         className={styles.resolutionBtn}>
                         <Radio.Button value="1D">1D</Radio.Button>
                         <Radio.Button value="5D">5D</Radio.Button>
                         <Radio.Button value="M">1M</Radio.Button>
-                        <Radio.Button value="6M">6M</Radio.Button>
-                        <Radio.Button value="6M">ALL</Radio.Button>
+                        <Radio.Button value="1Y">1Y</Radio.Button>
+                        <Radio.Button value="ALL">ALL</Radio.Button>
                       </Radio.Group>
                     </div>
                   )}
                 </Card>
               </Col>
               <Col span={8}>
-                <Card style={{ minWidth: 400 }}>
+                <Card>
                   {nasdaqData && (
                     <div>
-                      <AreaChart
-                        data={nasdaqData}
-                        type="hybrid"
-                        width={400}
-                        height={200}
-                        ratio={1}
-                      />
+                      <AreaChart data={nasdaqData} xExtents={nasdaqXExtents} />
                       <Radio.Group
+                        value={ndxBtn}
+                        name="ndx"
                         onChange={handleResolutionChange}
                         className={styles.resolutionBtn}>
                         <Radio.Button value="1D">1D</Radio.Button>
                         <Radio.Button value="5D">5D</Radio.Button>
                         <Radio.Button value="M">1M</Radio.Button>
-                        <Radio.Button value="6M">6M</Radio.Button>
-                        <Radio.Button value="6M">ALL</Radio.Button>
+                        <Radio.Button value="1Y">1Y</Radio.Button>
+                        <Radio.Button value="ALL">ALL</Radio.Button>
                       </Radio.Group>
                     </div>
                   )}
@@ -457,7 +503,10 @@ function Home() {
 
               <Col span={8}>
                 {/* popluar ranking */}
-                <Card
+                <div className={styles.moverBlock}>
+                  <MoverBlock dateRange="1D" />
+                </div>
+                {/* <Card
                   tabBarExtraContent={
                     <Button
                       shape="circle"
@@ -475,7 +524,7 @@ function Home() {
                   <Skeleton loading={moverLoading} avatar active>
                     {moverContent[moverTab]}
                   </Skeleton>
-                </Card>
+                </Card> */}
 
                 {/* position */}
                 <Card bodyStyle={{ padding: 0 }}>

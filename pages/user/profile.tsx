@@ -1,7 +1,5 @@
 import { Form, Input, InputNumber, Button } from "antd"
 import React from "react"
-import request from "./api/request"
-import { Url } from "../constant/urlConstant"
 
 interface User {
   name: string
@@ -26,10 +24,6 @@ const validateMessages = {
 function Profile() {
   const onFinish = async (values: User) => {
     console.log(values)
-    await request.post(`${Url.LOCAL}/get_current_user`).then((res) => {
-      console.log("res", res)
-    })
-    // alert(values)
   }
   const { labelCol, wrapperCol } = layout
   return (

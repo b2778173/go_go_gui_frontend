@@ -8,7 +8,7 @@ module.exports = (phase, { defaultConfig }) => {
     return {
       /* development only config options here */
       env: {
-        FLASK_API_BASE: "http://localhost:5000"
+        API_BASE_URL: "http://localhost:5555/api"
       }
     }
   }
@@ -16,7 +16,7 @@ module.exports = (phase, { defaultConfig }) => {
     return {
       /* config options for all phases except development here */
       env: {
-        FLASK_API_BASE: "https://limitless-peak-52274.herokuapp.com"
+        API_BASE_URL: "https://limitless-peak-52274.herokuapp.com"
       }
     }
   }
