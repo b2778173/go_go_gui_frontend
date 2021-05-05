@@ -4,6 +4,7 @@ import { Card, Skeleton, Table, Row, Col, Radio, Button } from "antd"
 import { ColumnsType } from "antd/es/table"
 // import { SyncOutlined } from "@ant-design/icons"
 import moment from "moment"
+import { useSelector, useDispatch } from "react-redux"
 import styles from "../styles/Home.module.scss"
 import Footer from "../components/footer"
 // import Chart from "../components/chart/chart"
@@ -13,8 +14,14 @@ import MoverBlock from "../components/moverBlock"
 import { marketNews, companyNews } from "../api/news"
 import getAreaChartData from "../api/chart"
 import { dayMover, quote } from "../api/stock"
+import { State } from "../store"
 
 function Home() {
+  // redux state
+  const { isSignedIn, currentUser } = useSelector<State, State>(
+    (state) => state
+  )
+
   const [tab, setTab] = useState("general")
   const [loading, setLoading] = useState(false)
   const [dowData, setDow] = useState(null)
@@ -421,6 +428,10 @@ function Home() {
     <div className={styles.container}>
       <main className={styles.main}>
         <>
+          <h1>
+            {isSignedIn ? "Signed in !" : ""}{" "}
+            {currentUser && currentUser.displayName}
+          </h1>
           <div className={styles.content}>
             {/* area chart */}
             <Row gutter={[16, 16]}>

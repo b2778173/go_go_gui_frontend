@@ -12,11 +12,19 @@ import firebase from "firebase/app"
 import "firebase/auth"
 import Link from "next/link"
 import Router from "next/router"
+import { useSelector, useDispatch } from "react-redux"
 import styles from "./styles/navbar.module.css"
 import TickerTape from "./tickerTape"
 import Watchlist from "./watchlist/watchlist"
 
+import { State } from "../store"
+
 function NavBar(props: { showTickerTap: boolean }) {
+  // redux state
+  const { isSignedIn, currentUser } = useSelector<State, State>(
+    (state) => state
+  )
+
   const { showTickerTap } = props
   const [current, changeCurrent] = useState("mail")
 
@@ -134,7 +142,7 @@ function NavBar(props: { showTickerTap: boolean }) {
                   icon={<UserOutlined />}
                   className={styles.avatar}
                 />
-                {firebase.auth().currentUser?.displayName} <DownOutlined />
+                {currentUser && currentUser.displayName} <DownOutlined />
               </a>
             </div>
           </Dropdown>

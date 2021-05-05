@@ -4,21 +4,23 @@ import { createStore, AnyAction, Store } from "redux"
 import { createWrapper, Context, HYDRATE } from "next-redux-wrapper"
 
 export interface State {
-  isSigned: boolean
+  isSignedIn: boolean
   currentUser: any
 }
 
 // create your reducer
 const reducer = (
-  state: State = { isSigned: false, currentUser: null },
+  state: State = { isSignedIn: false, currentUser: null },
   action: AnyAction
 ) => {
+  const { isSignedIn, currentUser } = action
+
   switch (action.type) {
     case HYDRATE:
       // Attention! This will overwrite client state! Real apps should use proper reconciliation.
       return { ...state, ...action.payload }
     case "setIsSigned":
-      return { ...state, tick: action.payload }
+      return { ...state, isSignedIn, currentUser }
     default:
       return state
   }

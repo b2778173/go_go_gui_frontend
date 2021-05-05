@@ -8,14 +8,25 @@ import firebase from "firebase/app"
 import "firebase/auth"
 import "../../util/firebase"
 
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { wrapper, State } from "../../store"
 
 import styles from "../../styles/Home.module.scss"
 
 export default function Login() {
   // Local signed-in state.
-  const [isSignedIn, setIsSignedIn] = useState(false)
+  // const [isSignedIn, setIsSignedIn] = useState(false)
+  const { isSignedIn, currentUser } = useSelector<State, State>(
+    (state) => state
+  )
+  const dispatch = useDispatch()
+
+  const setIsSignedIn = (isSigned: boolean, user: any) =>
+    dispatch({
+      type: "setIsSigned",
+      isSignedIn: isSigned,
+      currentUser: user
+    })
 
   const setToken = async (user: any) => {
     const idToken = await user.getIdToken()
@@ -57,10 +68,6 @@ export default function Login() {
     ]
   }
 
-  const { isSigned } = useSelector<State, State>((state: State) => state)
-  console.log(useSelector<State, State>((state: State) => state))
-  console.log(wrapper)
-
   // componentDidMounted
   useEffect(() => {
     // check login status is ture , redirct to home page
@@ -71,9 +78,19 @@ export default function Login() {
     // Listen to the Firebase Auth state and set the local state.
     const unregisterAuthObserver = firebase
       .auth()
-      .onAuthStateChanged((user) => {
-        // console.log(`onAuthStateChanged`)
-        setIsSignedIn(!!user)
+      .onAuthStateChanged((user: any) => {
+        console.log(`onAuthStateChanged`, user)
+        let userData = null
+        if (user) {
+          userData = {
+            displayName: user.displayName,
+            email: user.email,
+            photoUrl: user.photoURL,
+            emailVerified: user.emailVerified,
+            uid: user.uid
+          }
+        }
+        setIsSignedIn(!!user, userData)
         if (user) {
           setToken(user)
         } else {
@@ -160,10 +177,7 @@ export default function Login() {
           </Form>
         ) : (
           <div>
-            <p>
-              Welcome {firebase.auth().currentUser?.displayName}! You are now
-              signed-in!
-            </p>
+            <p>Welcome {currentUser.displayName}! You are now signed-in!</p>
             <Button type="link" onClick={() => firebase.auth().signOut()}>
               Sign-out
             </Button>
