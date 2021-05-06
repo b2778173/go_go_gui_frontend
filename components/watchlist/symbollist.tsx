@@ -1,6 +1,6 @@
 import {Button, Table} from 'antd';
 import {useEffect, useState} from "react";
-import {getAllWatchlist, mockSymbolList, addWatchlist} from "../../api/watchlist";
+import {getAllWatchlist, getSymbolList, addWatchlist} from "../../api/watchlist";
 import {
     PlusOutlined
 } from "@ant-design/icons"
@@ -8,39 +8,41 @@ import {
 const SymbolList = (props: any) => {
     let count = 0;
 
-    const [resp, setResp] = useState([{symbol:'', name:'', currency:'',stockExchange:'',exchangeShortName:''}]);
-    const [rowKey, setRowKey] = useState('');
-
+    const [symbolList, setSymbolList] = useState([{symbol:'', name:'', currency:'',stockExchange:0,exchangeShortName:''}]);
+    const [watchlist, setWatchlist] = useState([{_id:'', marketCap:'', price:0}]);
 
     const addSymbolToWatchlistHandler = function (symbol: string | number | readonly string[] | undefined) {
-        let req = resp.filter(obj => {
+        let req = symbolList.filter(obj => {
             return obj.symbol == symbol;
         });
-        //TODO 新增Watchlist api
-        // addWatchlist([req]);
-
+        addWatchlist(req[0]);
     }
 
     const columns = [
         {
             title: "SYMBOL",
-            dataIndex:"symbol"
+            dataIndex:"symbol",
+            key: "symbol"
         },
         {
             title: "NAME",
-            dataIndex:"name"
+            dataIndex:"name",
+            key: "name"
         },
         {
             title: "CURRENCY",
-            dataIndex:"currency"
+            dataIndex:"currency",
+            key: "currency"
         },
         {
             title: "STOCK EXCHANGE",
-            dataIndex:"stockExchange"
+            dataIndex:"stockExchange",
+            key: "stockExchange"
         },
         {
             title: "EXCHANGE SHORTNAME",
-            dataIndex:"exchangeShortName"
+            dataIndex:"exchangeShortName",
+            key: "exchangeShortName"
         },
         {
             title: 'Action',
@@ -58,23 +60,32 @@ const SymbolList = (props: any) => {
     // retrieve open Ticker data
     useEffect(
         () => {
-            const response: any = mockSymbolList();
-            response.then((res: { data: any; }) => {
+            const symbolResp: any = getSymbolList();
+            symbolResp.then((res: []) => {
                 let searchText = props.name;
+                let searchResult;
                 if (searchText) {
-                    res.data = res.data.filter((item: { symbol: String; }) => {
-                        return item.symbol.indexOf(searchText) >= 0;
+                    searchResult = res.filter((item: { symbol: String; }) => {
+                        return item.symbol.indexOf(searchText) >= 0
                     });
+                    setSymbolList(searchResult);
+                } else {
+                    setSymbolList(res);
                 }
-                setResp(res.data);
             });
+
+            const watchListResp: any = getAllWatchlist();
+            watchListResp.then((res: []) => {
+                setWatchlist(res);
+            });
+
         }, [props.name]
     )
 
 
     return(
         <>
-            <Table columns={columns} dataSource={resp}/>
+            <Table columns={columns} dataSource={symbolList} rowKey={symbolList => symbolList.symbol}/>
         </>
 
     )

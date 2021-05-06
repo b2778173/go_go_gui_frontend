@@ -1,6 +1,6 @@
 import { AutoComplete } from 'antd';
 import React, {useEffect, useState} from "react";
-import {mockSymbolList} from "../../api/watchlist";
+import {getSymbolList} from "../../api/watchlist";
 
 
 const SymbolSearchBar = (props: { onSymbolSearchBarChange: (arg0: any) => void; }) => {
@@ -24,13 +24,11 @@ const SymbolSearchBar = (props: { onSymbolSearchBarChange: (arg0: any) => void; 
     }
 
 
-
-
     useEffect(
         () => {
-            const response: any = mockSymbolList();
-            response.then((res: { data: any; }) => {
-                setResp(res.data);
+            const response: any = getSymbolList();
+            response.then((res: []) => {
+                setResp(res);
             });
         }, []);
 
