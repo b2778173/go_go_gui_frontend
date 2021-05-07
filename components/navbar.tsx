@@ -7,9 +7,7 @@ import {
   DownOutlined
 } from "@ant-design/icons"
 import React, { useState } from "react"
-import "../util/firebase"
-import firebase from "firebase/app"
-import "firebase/auth"
+
 import Link from "next/link"
 import Router from "next/router"
 import { useSelector, useDispatch } from "react-redux"
@@ -24,6 +22,7 @@ function NavBar(props: { showTickerTap: boolean }) {
   const { isSignedIn, currentUser } = useSelector<State, State>(
     (state) => state
   )
+  const dispatch = useDispatch()
 
   const { showTickerTap } = props
   const [current, changeCurrent] = useState("mail")
@@ -38,9 +37,7 @@ function NavBar(props: { showTickerTap: boolean }) {
   }
 
   const logout = () => {
-    sessionStorage.removeItem("idToken")
-    firebase.auth().signOut()
-    Router.push("/user/login")
+    dispatch({ type: "logout" })
   }
 
   // component

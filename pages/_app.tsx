@@ -1,17 +1,22 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable react/jsx-props-no-spreading */
 import "../styles/globals.css"
 import "antd/dist/antd.css"
 import { AppProps } from "next/app"
-import React, { useEffect, useState, FC } from "react"
+import React, { useEffect, useState } from "react"
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
 import { useRouter } from "next/router"
 import { Spin } from "antd"
+import { PersistGate } from "redux-persist/integration/react"
+import { useStore } from "react-redux"
 import AppContainer from "../components/app-container"
 import NavBar from "../components/navbar"
 import { wrapper } from "../store"
 
 function WrappedApp({ Component, pageProps }: AppProps) {
+  const store: any = useStore()
+
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   useEffect(() => {
@@ -34,17 +39,17 @@ function WrappedApp({ Component, pageProps }: AppProps) {
   })
 
   return (
-    <>
-      <Spin size="large" spinning={loading}>
-        <nav>
-          {/* <Chart /> */}
-          <NavBar showTickerTap />
-          <AppContainer>
+    <Spin size="large" spinning={loading}>
+      <nav>
+        {/* <Chart /> */}
+        <NavBar showTickerTap />
+        <AppContainer>
+          <PersistGate persistor={store.__persistor}>
             <Component {...pageProps} />
-          </AppContainer>
-        </nav>
-      </Spin>
-    </>
+          </PersistGate>
+        </AppContainer>
+      </nav>
+    </Spin>
   )
 }
 

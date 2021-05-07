@@ -1,6 +1,5 @@
 import { Form, Input, Button, Checkbox, message } from "antd"
 import { UserOutlined, LockOutlined } from "@ant-design/icons"
-import Router from "next/router"
 import React, { useState, useEffect } from "react"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
 
@@ -39,21 +38,25 @@ export default function Login() {
 
   const onLoginIn = async (values: any) => {
     console.log("Received values of form: ", values)
-
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(values.username, values.password)
-      .then(async (userCredential) => {
-        // Signed in
-        const { user } = userCredential
-        if (user) {
-          setToken(user)
-          Router.push("/")
-        }
-      })
-      .catch((error) => {
-        message.error(error.code, 3)
-      })
+    dispatch({
+      type: "logIn",
+      username: values.username,
+      password: values.password
+    })
+    // firebase
+    //   .auth()
+    //   .signInWithEmailAndPassword(values.username, values.password)
+    //   .then(async (userCredential) => {
+    //     // Signed in
+    //     const { user } = userCredential
+    //     if (user) {
+    //       setToken(user)
+    //       Router.push("/")
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     message.error(error.code, 3)
+    //   })
   }
 
   const uiConfig = {
@@ -178,7 +181,7 @@ export default function Login() {
         ) : (
           <div>
             <p>Welcome {currentUser.displayName}! You are now signed-in!</p>
-            <Button type="link" onClick={() => firebase.auth().signOut()}>
+            <Button type="link" onClick={() => dispatch({ type: "logout" })}>
               Sign-out
             </Button>
           </div>

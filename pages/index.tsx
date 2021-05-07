@@ -4,7 +4,7 @@ import { Card, Skeleton, Table, Row, Col, Radio, Button } from "antd"
 import { ColumnsType } from "antd/es/table"
 // import { SyncOutlined } from "@ant-design/icons"
 import moment from "moment"
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector, useDispatch, connect } from "react-redux"
 import styles from "../styles/Home.module.scss"
 import Footer from "../components/footer"
 // import Chart from "../components/chart/chart"
@@ -554,7 +554,7 @@ function Home() {
   )
 }
 
-export default Home
+export default connect((state) => state)(Home)
 
 // Home.getInitialProps = async () => {
 //   const response = await getData()
