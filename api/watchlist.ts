@@ -10,16 +10,16 @@ export function addWatchlist(req: {
   symbol: string,
   name: string,
   currency: string,
-  stockExchange: number,
+  stockExchange: string,
   exchangeShortName: string}
 ): Promise<any> {
   const url = `/watchlist/addWatchlist`
   return request.post(url, req)
 }
 
-export function delWatchlist(req: object): Promise<any> {
-  const url = `/delWatchList`
-  return request.post(url, { req })
+export function rmWatchlist(symbol: string): Promise<any> {
+  const url = `/watchlist/rmWatchlist`
+  return request.post(url, { symbol })
 }
 
 // Resource https://financialmodelingprep.com/developer/docs/stock-ticker-symbol-lookup-api/

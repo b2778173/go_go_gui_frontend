@@ -1,21 +1,22 @@
-import {Button, Table} from 'antd';
+import {Button, Table, Tag} from 'antd';
 import {useEffect, useState} from "react";
-import {getAllWatchlist, getSymbolList, addWatchlist} from "../../api/watchlist";
+import {getAllWatchlist, getSymbolList, addWatchlist, rmWatchlist} from "../../api/watchlist";
 import {
-    PlusOutlined
+    PlusOutlined, MinusOutlined
 } from "@ant-design/icons"
 
 const SymbolList = (props: any) => {
-    let count = 0;
 
-    const [symbolList, setSymbolList] = useState([{symbol:'', name:'', currency:'',stockExchange:0,exchangeShortName:''}]);
+    const [symbolList, setSymbolList] = useState([{symbol:'', name:'', currency:'', stockExchange:'', exchangeShortName:''}]);
     const [watchlist, setWatchlist] = useState([{_id:'', marketCap:'', price:0}]);
+    const [shape, setShape] = useState('');
 
-    const addSymbolToWatchlistHandler = function (symbol: string | number | readonly string[] | undefined) {
-        let req = symbolList.filter(obj => {
-            return obj.symbol == symbol;
-        });
-        addWatchlist(req[0]);
+    const insertAndDelHandler = (record: { symbol: string; }) => {
+        if (watchlist.some(watchItem => watchItem._id == record.symbol)) {
+            return "DEL";
+        } else {
+            return "ADD";
+        }
     }
 
     const columns = [
@@ -48,12 +49,38 @@ const SymbolList = (props: any) => {
             title: 'Action',
             dataIndex: '',
             key: 'x',
-            render: (text: any, record: { symbol: string | number | readonly string[] | undefined; }) => (
-                <Button value={record.symbol} shape="circle" icon={<PlusOutlined />} onClick={() => {
-                    addSymbolToWatchlistHandler(record.symbol);
-                }} />
+            render: (text: any, record: { symbol: string, name: string, currency: string, stockExchange: string, exchangeShortName: string }) => (
+              <Button value={record.symbol} shape="circle"
+                      icon={watchlist.some(
+                        watchItem =>  watchItem._id == record.symbol) ? <MinusOutlined /> : <PlusOutlined />
+                      }
+                      onClick={() => {
+                          let addDelBtn = insertAndDelHandler(record);
+                          console.log('addDelBtn:',addDelBtn);
+                          if (addDelBtn == 'ADD') {
+                              addWatchlist(record).then(() => {
+                                  getSymbolList().then((res: []) => {
+                                      setSymbolList(res);
+                                  });
+                              }).then(() => {
+                                  getAllWatchlist().then((res: []) => {
+                                      setWatchlist(res);
+                                  });
+                              });
+                          } else {
+                              rmWatchlist(record.symbol).then(() => {
+                                  getSymbolList().then((res: []) => {
+                                      setSymbolList(res);
+                                  });
+                              }).then(() => {
+                                  getAllWatchlist().then((res: []) => {
+                                      setWatchlist(res);
+                                  });
+                              });
+                          }
+                      }
+              }/>
             )
-                // <Button shape="circle" icon={<PlusOutlined />} />,
         },
     ]
 
