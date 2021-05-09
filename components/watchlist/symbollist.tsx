@@ -9,7 +9,6 @@ const SymbolList = (props: any) => {
 
     const [symbolList, setSymbolList] = useState([{symbol:'', name:'', currency:'', stockExchange:'', exchangeShortName:''}]);
     const [watchlist, setWatchlist] = useState([{_id:'', marketCap:'', price:0}]);
-    const [shape, setShape] = useState('');
 
     const insertAndDelHandler = (record: { symbol: string; }) => {
         if (watchlist.some(watchItem => watchItem._id == record.symbol)) {

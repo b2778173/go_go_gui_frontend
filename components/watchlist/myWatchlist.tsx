@@ -1,33 +1,48 @@
-import { List } from 'antd';
+import { Table } from 'antd';
 import {useEffect, useState} from "react";
-import {getAllWatchlist, mockSymbolList} from "../../api/watchlist";
+import {getAllWatchlist} from "../../api/watchlist";
 
-const SymbolList = () => {
+const MyWatchlist = () => {
 
-    const [resp, setResp] = useState([]);
+    const [watchlist, setWatchlist] = useState([{_id:'', market_cap:'', price:0}]);
+
+
+  const columns =  [
+      {
+        title: "SYMBOL",
+        dataIndex:"_id",
+        key: "symbol"
+      },
+      {
+        title: "MARKET CAP",
+        dataIndex:"market_cap",
+        key: "marketCap"
+      },
+      {
+        title: "PRICE",
+        dataIndex:"price",
+        key: "price"
+      }
+    ]
+
 
     useEffect(
         () => {
-            const response: any = getAllWatchlist();
-            setResp(response);
-            console.log("response",response);
-        }
+          const response: any = getAllWatchlist();
+          response.then((res: []) => {
+            setWatchlist(res);
+          });
+          return () => console.log('unmounting myWatchlist component...');
+        } , []
     )
 
-    return(
-        <>
-            <List
-                size="large"
-                header={<div>Header</div>}
-                footer={<div>Footer</div>}
-                bordered
-                dataSource={resp}
-                renderItem={item => <List.Item>{item}</List.Item>}
-            />
-        </>
+  return(
+    <>
+      <Table columns={columns} dataSource={watchlist} rowKey={watchlist => watchlist._id}/>
+    </>
 
-    )
+  )
 }
 
 
-export default SymbolList;
+export default MyWatchlist;

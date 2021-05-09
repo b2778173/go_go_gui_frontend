@@ -3,6 +3,7 @@ import { Modal, Button, Input, Row, Col, Divider, Space, Tabs } from "antd"
 import SymbolType from "./symbolType"
 import SymbolList from "./symbollist"
 import SymbolSearchBar from "./searchBar"
+import MyWatchlist from './myWatchlist'
 
 const { TabPane } = Tabs
 
@@ -18,16 +19,16 @@ const Watchlist = () => {
 
   return (
     <>
-      <Button type="link" onClick={() => setVisible(true)}>
-        Watchlist
-      </Button>
+      <span onClick={() => setVisible(true)}>
+        WATCHLIST
+      </span>
       <Modal
         centered
         visible={visible}
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         width={1000}>
-        <Tabs defaultActiveKey="1">
+        <Tabs defaultActiveKey="1" destroyInactiveTabPane={true}>
           <TabPane tab="Add Symbol" key="1">
             <Space direction="vertical">
               <Row>
@@ -42,7 +43,7 @@ const Watchlist = () => {
             </Space>
           </TabPane>
           <TabPane tab="My WatchList" key="2">
-            {/* TODO */}
+            <MyWatchlist/>
           </TabPane>
           <TabPane tab="Tab 3" key="3">
             Content of Tab Pane 3
