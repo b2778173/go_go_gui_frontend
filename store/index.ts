@@ -1,17 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import { persistStore, persistReducer } from "redux-persist"
 import storage from "redux-persist/lib/storage" // defaults to localStorage for web
-import {
-  createStore,
-  AnyAction,
-  Store,
-  applyMiddleware,
-  combineReducers
-} from "redux"
-import { createWrapper, HYDRATE } from "next-redux-wrapper"
+import { createStore, Store, applyMiddleware, combineReducers } from "redux"
+import { createWrapper } from "next-redux-wrapper"
 
 import logger from "redux-logger"
-import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2"
 import userReducer from "../reducer/user"
 
 export interface State {
