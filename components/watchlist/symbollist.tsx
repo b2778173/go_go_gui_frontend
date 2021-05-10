@@ -1,4 +1,4 @@
-import {Button, Table, Tag} from 'antd';
+import {Button, Table} from 'antd';
 import {useEffect, useState} from "react";
 import {getAllWatchlist, getSymbolList, addWatchlist, rmWatchlist} from "../../api/watchlist";
 import {

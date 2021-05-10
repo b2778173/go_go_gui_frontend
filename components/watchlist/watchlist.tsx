@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import { Modal, Button, Input, Row, Col, Divider, Space, Tabs } from "antd"
+import React, { useState } from "react"
+import { Modal, Row, Space, Tabs } from "antd"
 import SymbolType from "./symbolType"
 import SymbolList from "./symbollist"
 import SymbolSearchBar from "./searchBar"
