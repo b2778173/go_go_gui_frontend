@@ -9,18 +9,18 @@ import "nprogress/nprogress.css"
 import { useRouter } from "next/router"
 import { Spin } from "antd"
 import { PersistGate } from "redux-persist/integration/react"
-import { useStore } from "react-redux"
+// import { useStore } from "react-redux"
 import AppContainer from "../components/app-container"
 import NavBar from "../components/navbar"
-import { wrapper } from "../store"
+import { wrapper, persistor } from "../store"
 
 function WrappedApp({ Component, pageProps }: AppProps) {
-  const store: any = useStore()
+  // const store: any = useStore()
 
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   useEffect(() => {
-    router.events.on("routeChangeStart", (url) => {
+    router.events.on("routeChangeStart", () => {
       setLoading(true)
       // console.log(`Loading: ${url}`)
       NProgress.start()
@@ -44,7 +44,7 @@ function WrappedApp({ Component, pageProps }: AppProps) {
         {/* <Chart /> */}
         <NavBar showTickerTap />
         <AppContainer>
-          <PersistGate persistor={store.__persistor}>
+          <PersistGate persistor={persistor}>
             <Component {...pageProps} />
           </PersistGate>
         </AppContainer>

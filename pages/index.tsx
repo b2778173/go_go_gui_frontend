@@ -5,6 +5,7 @@ import { ColumnsType } from "antd/es/table"
 // import { SyncOutlined } from "@ant-design/icons"
 import moment from "moment"
 import { useSelector, useDispatch, connect } from "react-redux"
+import { GetServerSideProps } from "next"
 import styles from "../styles/Home.module.scss"
 import Footer from "../components/footer"
 // import Chart from "../components/chart/chart"
@@ -559,4 +560,14 @@ export default connect((state) => state)(Home)
 // Home.getInitialProps = async () => {
 //   const response = await getData()
 //   return { data: response }
+// }
+
+// This gets called on every request
+
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//   // Fetch data from external API
+//   const data = null
+//   console.log("getServerSideProps")
+//   // Pass data to the page via props
+//   return { props: { data } }
 // }

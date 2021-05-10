@@ -15,13 +15,10 @@ import styles from "./styles/navbar.module.css"
 import TickerTape from "./tickerTape"
 import Watchlist from "./watchlist/watchlist"
 
-import { State } from "../store"
-
 function NavBar(props: { showTickerTap: boolean }) {
   // redux state
-  const { isSignedIn, currentUser } = useSelector<State, State>(
-    (state) => state
-  )
+  const userState = useSelector((state: any) => state.user)
+  const { isSignedIn, currentUser, text } = userState
   const dispatch = useDispatch()
 
   const { showTickerTap } = props
@@ -33,11 +30,16 @@ function NavBar(props: { showTickerTap: boolean }) {
     changeCurrent(e.key)
   }
   const onSearch = (value: string) => {
-    // console.log(value)
+    console.log(value)
+    dispatch({ type: "searchInput", payload: { text: value } })
   }
 
   const logout = () => {
-    dispatch({ type: "logout" })
+    if (currentUser) {
+      dispatch({ type: "logout" })
+    } else {
+      Router.push("/user/login")
+    }
   }
 
   // component
@@ -51,7 +53,7 @@ function NavBar(props: { showTickerTap: boolean }) {
         <Link href="/">Home</Link>
       </Menu.Item>
       <Menu.Item>
-        <Link href="/user/login">Login</Link>
+        <Link href="/user/111">11111</Link>
       </Menu.Item>
       <Menu.Item>
         <Link href="/profile">Profile</Link>
@@ -68,7 +70,7 @@ function NavBar(props: { showTickerTap: boolean }) {
         </a>
       </Menu.Item>
       <Menu.Item danger onClick={logout}>
-        Log out
+        {currentUser ? `Log out` : `Sign in`}
       </Menu.Item>
     </Menu>
   )

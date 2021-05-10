@@ -1,30 +1,25 @@
-import { Form, Input, Button, Checkbox, message } from "antd"
+import { Form, Input, Button, Checkbox } from "antd"
 import { UserOutlined, LockOutlined } from "@ant-design/icons"
 import React, { useState, useEffect } from "react"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
-
 import firebase from "firebase/app"
 import "firebase/auth"
 import "../../util/firebase"
-
-import { useSelector, useDispatch } from "react-redux"
-import { wrapper, State } from "../../store"
-
+import { useSelector, useDispatch, connect } from "react-redux"
 import styles from "../../styles/Home.module.scss"
 
-export default function Login() {
+function Login() {
   // Local signed-in state.
-  // const [isSignedIn, setIsSignedIn] = useState(false)
-  const { isSignedIn, currentUser } = useSelector<State, State>(
-    (state) => state
-  )
+  // const [isSignedIn, setIsSignedInUser] = useState(false)
+  // redux state
+  const userState = useSelector((state: any) => state.user)
+  const { isSignedIn, currentUser, text } = userState
   const dispatch = useDispatch()
 
-  const setIsSignedIn = (isSigned: boolean, user: any) =>
+  const setIsSignedInUser = (isSigned: boolean, user: any) =>
     dispatch({
-      type: "setIsSigned",
-      isSignedIn: isSigned,
-      currentUser: user
+      type: "setIsSignedInUser",
+      payload: { isSignedIn: isSigned, currentUser: user }
     })
 
   const setToken = async (user: any) => {
@@ -36,27 +31,12 @@ export default function Login() {
     sessionStorage.removeItem("idToken")
   }
 
-  const onLoginIn = async (values: any) => {
-    console.log("Received values of form: ", values)
+  const onLoginIn = async (payload: { username: string; password: string }) => {
+    console.log("Received values of form: ", payload)
     dispatch({
       type: "logIn",
-      username: values.username,
-      password: values.password
+      payload
     })
-    // firebase
-    //   .auth()
-    //   .signInWithEmailAndPassword(values.username, values.password)
-    //   .then(async (userCredential) => {
-    //     // Signed in
-    //     const { user } = userCredential
-    //     if (user) {
-    //       setToken(user)
-    //       Router.push("/")
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     message.error(error.code, 3)
-    //   })
   }
 
   const uiConfig = {
@@ -92,13 +72,12 @@ export default function Login() {
             emailVerified: user.emailVerified,
             uid: user.uid
           }
-        }
-        setIsSignedIn(!!user, userData)
-        if (user) {
           setToken(user)
         } else {
           deletToken()
         }
+        console.log("setIsSignedInUser")
+        setIsSignedInUser(!!user, userData)
       })
     // Make sure we un-register Firebase observers when the component unmounts.
     return () => unregisterAuthObserver()
@@ -106,6 +85,7 @@ export default function Login() {
 
   return (
     <>
+      <h1>{text}</h1>
       <div className={styles.container}>
         <h1>Welcom to GO-GO-GUI</h1>
         {!isSignedIn ? (
@@ -161,15 +141,6 @@ export default function Login() {
               </Button>
               Or <a href="/user/register">register now!</a>
             </Form.Item>
-            {/* fb login */}
-            {/* <FacebookLogin
-              appId="479394116407879"
-              autoLoad
-              fields="name,email,picture"
-              onClick={componentClicked}
-              callback={responseFacebook}
-            /> */}
-
             {/* fb, google login */}
             <div>
               <StyledFirebaseAuth
@@ -191,14 +162,4 @@ export default function Login() {
   )
 }
 
-// login.getInitialProps = async () => {
-//     try {
-//         const res = await axios.get('http://localhost:5000/auth');
-//         const restaurants = res.data;
-//         console.log('res', res)
-//         console.log('restaurants', restaurants)
-//         return {restaurants};
-//     } catch (error) {
-//         return {error};
-//     }
-// };
+export default connect()(Login)
