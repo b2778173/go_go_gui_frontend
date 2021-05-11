@@ -6,13 +6,13 @@ import "firebase/auth"
 import Router from "next/router"
 import { message } from "antd"
 
-export interface State {
+export interface UserState {
   isSignedIn: boolean
   currentUser: any
   text: string
 }
 
-const defaultState = {
+const defaultState: UserState = {
   isSignedIn: false,
   currentUser: null,
   text: ""
@@ -47,31 +47,33 @@ const logIn = (username: string, password: string) => {
     })
 }
 
-export default function reducer(
-  state: State = defaultState,
+function reducer(
+  state: UserState = defaultState,
   action: AnyAction
-): State {
+): UserState {
   console.log("action=", action)
   switch (action.type) {
     case HYDRATE:
       // Attention! This will overwrite client state! Real apps should use proper reconciliation.
       return { ...state, ...action.payload }
-    case "setIsSignedInUser":
+    case "SET_USER":
       return {
         ...state,
         isSignedIn: action.payload.isSignedIn,
         currentUser: action.payload.currentUser
       }
-    case "logIn":
+    case "LOG_IN":
       logIn(action.payload.username, action.payload.password)
       return { ...state, ...action.payload }
-    case "logout":
+    case "LOG_OUT":
       logout()
       return { ...state, ...action.payload }
-    case "searchInput":
+    case "SET_TEXT":
       return { ...state, text: action.payload.text }
 
     default:
       return state
   }
 }
+
+export default reducer

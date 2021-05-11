@@ -31,12 +31,12 @@ function NavBar(props: { showTickerTap: boolean }) {
   }
   const onSearch = (value: string) => {
     console.log(value)
-    dispatch({ type: "searchInput", payload: { text: value } })
+    dispatch({ type: "SET_TEXT", payload: { text: value } })
   }
 
   const logout = () => {
     if (currentUser) {
-      dispatch({ type: "logout" })
+      dispatch({ type: "LOG_OUT" })
     } else {
       Router.push("/user/login")
     }

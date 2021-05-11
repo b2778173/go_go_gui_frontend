@@ -7,18 +7,20 @@ import "firebase/auth"
 import "../../util/firebase"
 import { useSelector, useDispatch, connect } from "react-redux"
 import styles from "../../styles/Home.module.scss"
+import { State } from "../../store"
+import { UserState } from "../../reducer/user"
 
 function Login() {
   // Local signed-in state.
   // const [isSignedIn, setIsSignedInUser] = useState(false)
   // redux state
-  const userState = useSelector((state: any) => state.user)
+  const userState = useSelector<State, UserState>((state: State) => state.user)
   const { isSignedIn, currentUser, text } = userState
   const dispatch = useDispatch()
 
   const setIsSignedInUser = (isSigned: boolean, user: any) =>
     dispatch({
-      type: "setIsSignedInUser",
+      type: "SET_USER",
       payload: { isSignedIn: isSigned, currentUser: user }
     })
 
@@ -34,7 +36,7 @@ function Login() {
   const onLoginIn = async (payload: { username: string; password: string }) => {
     console.log("Received values of form: ", payload)
     dispatch({
-      type: "logIn",
+      type: "LOG_IN",
       payload
     })
   }
@@ -162,4 +164,4 @@ function Login() {
   )
 }
 
-export default connect()(Login)
+export default Login

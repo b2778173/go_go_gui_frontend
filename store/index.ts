@@ -1,16 +1,13 @@
-/* eslint-disable no-underscore-dangle */
 import { persistStore, persistReducer } from "redux-persist"
 import storage from "redux-persist/lib/storage" // defaults to localStorage for web
 import { createStore, Store, applyMiddleware, combineReducers } from "redux"
 import { createWrapper } from "next-redux-wrapper"
 
 import logger from "redux-logger"
-import userReducer from "../reducer/user"
+import userReducer, { UserState } from "../reducer/user"
 
 export interface State {
-  isSignedIn: boolean
-  currentUser: any
-  text: string
+  user: UserState
 }
 
 // create your reducer

@@ -16,11 +16,12 @@ import { marketNews, companyNews } from "../api/news"
 import getAreaChartData from "../api/chart"
 import { dayMover, quote } from "../api/stock"
 import { State } from "../store"
+import { UserState } from "../reducer/user"
 
 function Home() {
   // redux state
-  const { isSignedIn, currentUser } = useSelector<State, State>(
-    (state) => state
+  const { isSignedIn, currentUser } = useSelector<State, UserState>(
+    (state) => state.user
   )
 
   const [tab, setTab] = useState("general")
