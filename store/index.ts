@@ -1,48 +1,40 @@
 import { persistStore, persistReducer } from "redux-persist"
 import storage from "redux-persist/lib/storage" // defaults to localStorage for web
-import { createStore, Store, applyMiddleware, combineReducers } from "redux"
+import { createStore, Store, applyMiddleware } from "redux"
 import { createWrapper } from "next-redux-wrapper"
 
 import logger from "redux-logger"
-import userReducer, { UserState } from "../reducer/user"
+import { UserState } from "../reducer/user"
+import combineReducer from "../reducer"
 
 export interface State {
   user: UserState
 }
 
-// create your reducer
-const combineReducer: any = combineReducers({
-  user: userReducer
-})
-
 // create a makeStore function
 const makeStore = () => {
   const isServer = typeof window === "undefined"
   if (isServer) {
-    return createStore(combineReducer, undefined, applyMiddleware(logger))
+    return createStore(combineReducer, applyMiddleware(logger))
   }
   // we need it only on client side
-
   const persistConfig = {
-    key: "nextjs",
+    key: "user",
     debug: true,
-    whitelist: ["isSignedIn", "currentUser", "text"], // make sure it does not clash with server keys
+    whitelist: ["user"], // make sure it does not clash with server keys
     storage
-    // stateReconciler: autoMergeLevel2
   }
 
   const persistedReducer = persistReducer(persistConfig, combineReducer)
-  const store: any = createStore(persistedReducer)
-
+  const store: any = createStore(persistedReducer, applyMiddleware(logger))
+  // eslint-disable-next-line no-underscore-dangle
+  store.__persistor = persistStore(store)
   return store
 }
 
 // export an assembled wrapper
-export const persistor = persistStore(makeStore()) // Nasty hack
+// const persistor = persistStore(makeStore()) // Nasty hack
 
 export const wrapper = createWrapper<Store<State>>(makeStore, { debug: true })
 
-// export const setClientState = (clientState) => ({
-//   type: "SET_CLIENT_STATE",
-//   payload: clientState
-// })
+// export { persistor, wrapper }

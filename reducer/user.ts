@@ -9,13 +9,13 @@ import { message } from "antd"
 export interface UserState {
   isSignedIn: boolean
   currentUser: any
-  text: string
+  // text: string
 }
 
 const defaultState: UserState = {
   isSignedIn: false,
-  currentUser: null,
-  text: ""
+  currentUser: null
+  // text: ""
 }
 
 // some methods
@@ -51,25 +51,24 @@ function reducer(
   state: UserState = defaultState,
   action: AnyAction
 ): UserState {
-  console.log("action=", action)
   switch (action.type) {
     case HYDRATE:
       // Attention! This will overwrite client state! Real apps should use proper reconciliation.
       return { ...state, ...action.payload }
+
     case "SET_USER":
-      return {
-        ...state,
-        isSignedIn: action.payload.isSignedIn,
-        currentUser: action.payload.currentUser
-      }
+      return { ...state, ...action.payload }
+
     case "LOG_IN":
       logIn(action.payload.username, action.payload.password)
-      return { ...state, ...action.payload }
+      return { ...state }
+
     case "LOG_OUT":
       logout()
-      return { ...state, ...action.payload }
-    case "SET_TEXT":
-      return { ...state, text: action.payload.text }
+      return { ...state }
+
+    // case "SET_TEXT":
+    //   return { ...state, text: action.payload.text }
 
     default:
       return state

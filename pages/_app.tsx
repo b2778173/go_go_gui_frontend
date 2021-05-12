@@ -10,12 +10,13 @@ import { useRouter } from "next/router"
 import { Spin } from "antd"
 import { PersistGate } from "redux-persist/integration/react"
 // import { useStore } from "react-redux"
+import { useStore } from "react-redux"
 import AppContainer from "../components/app-container"
 import NavBar from "../components/navbar"
-import { wrapper, persistor } from "../store"
+import { wrapper } from "../store"
 
 function WrappedApp({ Component, pageProps }: AppProps) {
-  // const store: any = useStore()
+  const store: any = useStore()
 
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -39,17 +40,23 @@ function WrappedApp({ Component, pageProps }: AppProps) {
   })
 
   return (
-    <Spin size="large" spinning={loading}>
-      <nav>
-        {/* <Chart /> */}
-        <NavBar showTickerTap />
-        <AppContainer>
-          <PersistGate persistor={persistor}>
+    <PersistGate
+      persistor={store.__persistor}
+      loading={
+        <div className="example">
+          <Spin tip="presisting..." />
+        </div>
+      }>
+      <Spin size="large" spinning={loading}>
+        <nav>
+          {/* <Chart /> */}
+          <NavBar showTickerTap />
+          <AppContainer>
             <Component {...pageProps} />
-          </PersistGate>
-        </AppContainer>
-      </nav>
-    </Spin>
+          </AppContainer>
+        </nav>
+      </Spin>
+    </PersistGate>
   )
 }
 

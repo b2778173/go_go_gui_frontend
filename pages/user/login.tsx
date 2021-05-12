@@ -6,6 +6,7 @@ import firebase from "firebase/app"
 import "firebase/auth"
 import "../../util/firebase"
 import { useSelector, useDispatch, connect } from "react-redux"
+import Router from "next/router"
 import styles from "../../styles/Home.module.scss"
 import { State } from "../../store"
 import { UserState } from "../../reducer/user"
@@ -15,7 +16,7 @@ function Login() {
   // const [isSignedIn, setIsSignedInUser] = useState(false)
   // redux state
   const userState = useSelector<State, UserState>((state: State) => state.user)
-  const { isSignedIn, currentUser, text } = userState
+  const { isSignedIn, currentUser } = userState
   const dispatch = useDispatch()
 
   const setIsSignedInUser = (isSigned: boolean, user: any) =>
@@ -34,14 +35,23 @@ function Login() {
   }
 
   const onLoginIn = async (payload: { username: string; password: string }) => {
-    console.log("Received values of form: ", payload)
     dispatch({
       type: "LOG_IN",
-      payload
+      payload: {
+        username: payload.username,
+        password: payload.password
+      }
     })
   }
 
   const uiConfig = {
+    callbacks: {
+      signInSuccessWithAuthResult: (authResult: any, redirectUrl: string) => {
+        console.log("signInSuccessWithAuthResult", authResult, redirectUrl)
+        Router.push("/")
+        return false
+      }
+    },
     // Popup signin flow rather than redirect flow.
     signInFlow: "popup",
     // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
@@ -64,7 +74,7 @@ function Login() {
     const unregisterAuthObserver = firebase
       .auth()
       .onAuthStateChanged((user: any) => {
-        console.log(`onAuthStateChanged`, user)
+        // console.log(`onAuthStateChanged`, user)
         let userData = null
         if (user) {
           userData = {
@@ -78,7 +88,6 @@ function Login() {
         } else {
           deletToken()
         }
-        console.log("setIsSignedInUser")
         setIsSignedInUser(!!user, userData)
       })
     // Make sure we un-register Firebase observers when the component unmounts.
@@ -87,7 +96,7 @@ function Login() {
 
   return (
     <>
-      <h1>{text}</h1>
+      {/* <h1>{text}</h1> */}
       <div className={styles.container}>
         <h1>Welcom to GO-GO-GUI</h1>
         {!isSignedIn ? (
@@ -154,7 +163,7 @@ function Login() {
         ) : (
           <div>
             <p>Welcome {currentUser.displayName}! You are now signed-in!</p>
-            <Button type="link" onClick={() => dispatch({ type: "logout" })}>
+            <Button type="link" onClick={() => dispatch({ type: "LOG_OUT" })}>
               Sign-out
             </Button>
           </div>

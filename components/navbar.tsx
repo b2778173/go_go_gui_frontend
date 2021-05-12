@@ -30,8 +30,8 @@ function NavBar(props: { showTickerTap: boolean }) {
     changeCurrent(e.key)
   }
   const onSearch = (value: string) => {
-    console.log(value)
-    dispatch({ type: "SET_TEXT", payload: { text: value } })
+    // console.log(value)
+    // dispatch({ type: "SET_TEXT", payload: { text: value } })
   }
 
   const logout = () => {
