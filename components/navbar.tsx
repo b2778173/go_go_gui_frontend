@@ -14,6 +14,7 @@ import { useSelector, useDispatch } from "react-redux"
 import styles from "./styles/navbar.module.css"
 import TickerTape from "./tickerTape"
 import Watchlist from "./watchlist/watchlist"
+import userActions from "../store/action/user"
 
 function NavBar(props: { showTickerTap: boolean }) {
   // redux state
@@ -36,7 +37,7 @@ function NavBar(props: { showTickerTap: boolean }) {
 
   const logout = () => {
     if (currentUser) {
-      dispatch({ type: "LOG_OUT" })
+      dispatch(userActions.logout())
     } else {
       Router.push("/user/login")
     }

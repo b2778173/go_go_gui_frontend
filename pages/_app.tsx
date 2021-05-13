@@ -14,6 +14,7 @@ import { useStore } from "react-redux"
 import AppContainer from "../components/app-container"
 import NavBar from "../components/navbar"
 import { wrapper } from "../store"
+import "../styles/firebaseui-styling.global.css"
 
 function WrappedApp({ Component, pageProps }: AppProps) {
   const store: any = useStore()

@@ -4,8 +4,8 @@ import { createStore, Store, applyMiddleware } from "redux"
 import { createWrapper } from "next-redux-wrapper"
 
 import logger from "redux-logger"
-import { UserState } from "../reducer/user"
-import combineReducer from "../reducer"
+import { UserState } from "./reducer/user"
+import combineReducer from "./reducer"
 
 export interface State {
   user: UserState

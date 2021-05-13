@@ -2,14 +2,16 @@ import { Form, Input, Button, Checkbox } from "antd"
 import { UserOutlined, LockOutlined } from "@ant-design/icons"
 import React, { useState, useEffect } from "react"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
+
 import firebase from "firebase/app"
 import "firebase/auth"
 import "../../util/firebase"
-import { useSelector, useDispatch, connect } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import Router from "next/router"
 import styles from "../../styles/Home.module.scss"
 import { State } from "../../store"
-import { UserState } from "../../reducer/user"
+import { UserState } from "../../store/reducer/user"
+import userActions, { LogIn } from "../../store/action/user"
 
 function Login() {
   // Local signed-in state.
@@ -34,14 +36,8 @@ function Login() {
     sessionStorage.removeItem("idToken")
   }
 
-  const onLoginIn = async (payload: { username: string; password: string }) => {
-    dispatch({
-      type: "LOG_IN",
-      payload: {
-        username: payload.username,
-        password: payload.password
-      }
-    })
+  const onLoginIn = async (payload: LogIn) => {
+    dispatch(userActions.login(payload))
   }
 
   const uiConfig = {
@@ -101,6 +97,7 @@ function Login() {
         <h1>Welcom to GO-GO-GUI</h1>
         {!isSignedIn ? (
           <Form
+            className={styles.logForm}
             name="normal_login"
             initialValues={{
               remember: true
@@ -155,6 +152,7 @@ function Login() {
             {/* fb, google login */}
             <div>
               <StyledFirebaseAuth
+                className={styles.firebaseui}
                 uiConfig={uiConfig}
                 firebaseAuth={firebase.auth()}
               />

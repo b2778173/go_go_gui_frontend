@@ -1,6 +1,6 @@
 import { HYDRATE } from "next-redux-wrapper"
 import { AnyAction } from "redux"
-import "../util/firebase"
+import "../../util/firebase"
 import firebase from "firebase/app"
 import "firebase/auth"
 import Router from "next/router"
