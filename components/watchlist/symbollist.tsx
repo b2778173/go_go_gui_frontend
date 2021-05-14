@@ -5,7 +5,7 @@ import {
     PlusOutlined, MinusOutlined
 } from "@ant-design/icons"
 
-const SymbolList = (props: any) => {
+const SymbolList = (props: {name: string, onSymbollistLoading: (arg0: boolean) => void;}) => {
 
     const [symbolList, setSymbolList] = useState([{symbol:'', name:'', currency:'', stockExchange:'', exchangeShortName:''}]);
     const [watchlist, setWatchlist] = useState([{_id:'', marketCap:'', price:0}]);
@@ -55,7 +55,6 @@ const SymbolList = (props: any) => {
                       }
                       onClick={() => {
                           let addDelBtn = insertAndDelHandler(record);
-                          console.log('addDelBtn:',addDelBtn);
                           if (addDelBtn == 'ADD') {
                               addWatchlist(record).then(() => {
                                   getSymbolList().then((res: []) => {
@@ -98,6 +97,7 @@ const SymbolList = (props: any) => {
                 } else {
                     setSymbolList(res);
                 }
+                props.onSymbollistLoading(false)
             });
 
             const watchListResp: any = getAllWatchlist();
@@ -105,8 +105,12 @@ const SymbolList = (props: any) => {
                 setWatchlist(res);
             });
 
-        }, [props.name]
-    )
+            return () => {
+                props.onSymbollistLoading(true)
+                console.log("symbollist component unmount...")
+            }
+
+        }, [props.name]);
 
 
     return(

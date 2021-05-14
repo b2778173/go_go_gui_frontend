@@ -2,7 +2,7 @@ import { Table } from 'antd';
 import {useEffect, useState} from "react";
 import {getAllWatchlist} from "../../api/watchlist";
 
-const MyWatchlist = () => {
+const MyWatchlist =  (props: {onSymbollistLoading: (arg0: boolean) => void;}) => {
 
     const [watchlist, setWatchlist] = useState([{_id:'', market_cap:'', price:0}]);
 
@@ -31,17 +31,19 @@ const MyWatchlist = () => {
           const response: any = getAllWatchlist();
           response.then((res: []) => {
             setWatchlist(res);
+            props.onSymbollistLoading(false);
           });
-          return () => console.log('unmounting myWatchlist component...');
-        } , []
-    )
+          return () => {
+            props.onSymbollistLoading(true);
+            console.log('unmounting myWatchlist component...');
+          }
+        }, []);
 
   return(
     <>
       <Table columns={columns} dataSource={watchlist} rowKey={watchlist => watchlist._id}/>
     </>
-
-  )
+  );
 }
 
 

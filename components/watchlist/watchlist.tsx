@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Modal, Row, Space, Tabs } from "antd"
+import { Modal, Row, Space, Tabs, Spin } from "antd"
 import SymbolType from "./symbolType"
 import SymbolList from "./symbollist"
 import SymbolSearchBar from "./searchBar"
@@ -10,11 +10,21 @@ const { TabPane } = Tabs
 const Watchlist = () => {
   const [visible, setVisible] = useState(false)
   const [searchText, setSearchText] = useState("")
+  const [loadingTab1, setLoadingTab1] = useState(true)
+  const [loadingTab2, setLoadingTab2] = useState(true)
 
   const symbolSearchBarChangeHandler = (
     value: React.SetStateAction<string>
   ) => {
     setSearchText(value)
+  }
+
+  const loadingTab1IconHandler = (value: React.SetStateAction<boolean>) => {
+    setLoadingTab1(value);
+  }
+
+  const loadingTab2IconHandler = (value: React.SetStateAction<boolean>) => {
+    setLoadingTab2(value);
   }
 
   return (
@@ -39,11 +49,15 @@ const Watchlist = () => {
               <Row>
                 <SymbolType />
               </Row>
-              <SymbolList name={searchText} />
+              <Spin size="large" spinning={loadingTab1}>
+                <SymbolList name={searchText} onSymbollistLoading={loadingTab1IconHandler} />
+              </Spin>
             </Space>
           </TabPane>
           <TabPane tab="My WatchList" key="2">
-            <MyWatchlist/>
+            <Spin size="large" spinning={loadingTab2}>
+              <MyWatchlist onSymbollistLoading={loadingTab2IconHandler}/>
+            </Spin>
           </TabPane>
           <TabPane tab="Tab 3" key="3">
             Content of Tab Pane 3
