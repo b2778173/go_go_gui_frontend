@@ -2,7 +2,7 @@ import {Button, Table} from 'antd';
 import {useEffect, useState} from "react";
 import {getAllWatchlist, getSymbolList, addWatchlist, rmWatchlist} from "../../api/watchlist";
 import {
-    PlusOutlined, MinusOutlined
+    MinusCircleTwoTone, PlusCircleTwoTone
 } from "@ant-design/icons"
 
 const SymbolList = (props: {name: string, onSymbollistLoading: (arg0: boolean) => void;}) => {
@@ -49,9 +49,9 @@ const SymbolList = (props: {name: string, onSymbollistLoading: (arg0: boolean) =
             dataIndex: '',
             key: 'x',
             render: (text: any, record: { symbol: string, name: string, currency: string, stockExchange: string, exchangeShortName: string }) => (
-              <Button value={record.symbol} shape="circle"
+              <Button value={record.symbol} type="link"
                       icon={watchlist.some(
-                        watchItem =>  watchItem._id == record.symbol) ? <MinusOutlined /> : <PlusOutlined />
+                        watchItem =>  watchItem._id == record.symbol) ? <MinusCircleTwoTone style={{ fontSize: '32px' }}  twoToneColor="#52c41a" /> : <PlusCircleTwoTone style={{ fontSize: '32px' }}  twoToneColor="#eb2f96" />
                       }
                       onClick={() => {
                           let addDelBtn = insertAndDelHandler(record);
