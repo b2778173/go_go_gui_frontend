@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable react/jsx-props-no-spreading */
 import "../styles/globals.css"
 import "antd/dist/antd.css"
@@ -7,14 +8,21 @@ import NProgress from "nprogress"
 import "nprogress/nprogress.css"
 import { useRouter } from "next/router"
 import { Spin } from "antd"
+import { PersistGate } from "redux-persist/integration/react"
+// import { useStore } from "react-redux"
+import { useStore } from "react-redux"
 import AppContainer from "../components/app-container"
 import NavBar from "../components/navbar"
+import { wrapper } from "../store"
+import "../styles/firebaseui-styling.global.css"
 
-function App({ Component, pageProps }: AppProps) {
+function WrappedApp({ Component, pageProps }: AppProps) {
+  const store: any = useStore()
+
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   useEffect(() => {
-    router.events.on("routeChangeStart", (url) => {
+    router.events.on("routeChangeStart", () => {
       setLoading(true)
       // console.log(`Loading: ${url}`)
       NProgress.start()
@@ -33,7 +41,13 @@ function App({ Component, pageProps }: AppProps) {
   })
 
   return (
-    <>
+    <PersistGate
+      persistor={store.__persistor}
+      loading={
+        <div className="example">
+          <Spin tip="presisting..." />
+        </div>
+      }>
       <Spin size="large" spinning={loading}>
         <nav>
           {/* <Chart /> */}
@@ -43,8 +57,8 @@ function App({ Component, pageProps }: AppProps) {
           </AppContainer>
         </nav>
       </Spin>
-    </>
+    </PersistGate>
   )
 }
 
-export default App
+export default wrapper.withRedux(WrappedApp)

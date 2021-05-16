@@ -145,17 +145,26 @@
 }
 
 .minusChange {
-    font-size: 16px;
-    color: red;
-    font-weight: 600;
+  font-size: 16px;
+  color: red;
+  font-weight: 600;
 }
 
 .moverBlock {
-    height: 600px;
-    margin-bottom: 10px;
+  height: 600px;
+  margin-bottom: 10px;
 }
-  
 
 .loginFormButton {
   margin: 5px;
+}
+
+.firebaseui {
+  width: 100%;
+}
+
+.logForm {
+  width: 50%;
+  min-width: 220px;
+  max-width: 360px;
 }

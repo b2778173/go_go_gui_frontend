@@ -42,7 +42,7 @@ const AreaChart = fitWidth(
         xScale={scaleTime()}
         zoomEvent={false}
         xExtents={xExtents}>
-        {console.log("area chart render")}
+        {/* {console.log("area chart render")} */}
         <Chart id={0} yExtents={(d: any) => d.close}>
           <defs>
             <linearGradient id="MyGradient" x1="0" y1="100%" x2="0" y2="0%">

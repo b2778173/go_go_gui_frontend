@@ -8,6 +8,8 @@ import "firebase/auth"
 // import Cookies from "js-cookie"
 
 // const accessToken = Cookies.get("Authorization")
+const isServer = typeof window === "undefined"
+// console.log("isServer", isServer)
 const request = axios.create({
   baseURL: process.env.API_BASE_URL,
   headers: {
@@ -23,18 +25,27 @@ request.interceptors.request.use(
     config.cancelToken = source.token
     // get token from Storage
     // const idToken = sessionStorage.getItem("idToken")
-    firebase.auth().onAuthStateChanged(async (user) => {
-      if (user) {
-        // User is signed in.
-        const idToken = await user.getIdToken()
-        sessionStorage.setItem("idToken", idToken)
-      } else {
-        // No user is signed in.
-        source.cancel()
-        Router.push("/user/login")
-      }
-    })
-    config.headers.idToken = sessionStorage.getItem("idToken")
+    // const token = () =>
+    // new Promise((resolve, reject) => {
+    if (!isServer) {
+      firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+          // User is signed in.
+          const idToken = await user.getIdToken()
+          sessionStorage.setItem("idToken", idToken)
+          // resolve(idToken)
+        } else {
+          // No user is signed in.
+          source.cancel()
+          Router.push("/user/login")
+          // reject()
+        }
+      })
+      // })
+
+      config.headers.idToken = sessionStorage.getItem("idToken")
+    }
+    // config.headers.idToken = await token()
     return config
   },
   (error: any) => {

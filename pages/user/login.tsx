@@ -1,18 +1,31 @@
-import { Form, Input, Button, Checkbox, message } from "antd"
+import { Form, Input, Button, Checkbox } from "antd"
 import { UserOutlined, LockOutlined } from "@ant-design/icons"
-import Router from "next/router"
 import React, { useState, useEffect } from "react"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
 
 import firebase from "firebase/app"
 import "firebase/auth"
 import "../../util/firebase"
-
+import { useSelector, useDispatch } from "react-redux"
+import Router from "next/router"
 import styles from "../../styles/Home.module.scss"
+import { State } from "../../store"
+import { UserState } from "../../store/reducer/user"
+import userActions, { LogIn } from "../../store/action/user"
 
-export default function Login() {
+function Login() {
   // Local signed-in state.
-  const [isSignedIn, setIsSignedIn] = useState(false)
+  // const [isSignedIn, setIsSignedInUser] = useState(false)
+  // redux state
+  const userState = useSelector<State, UserState>((state: State) => state.user)
+  const { isSignedIn, currentUser } = userState
+  const dispatch = useDispatch()
+
+  const setIsSignedInUser = (isSigned: boolean, user: any) =>
+    dispatch({
+      type: "SET_USER",
+      payload: { isSignedIn: isSigned, currentUser: user }
+    })
 
   const setToken = async (user: any) => {
     const idToken = await user.getIdToken()
@@ -23,35 +36,18 @@ export default function Login() {
     sessionStorage.removeItem("idToken")
   }
 
-  const onLoginIn = async (values: any) => {
-    console.log("Received values of form: ", values)
-    // const user = {
-    //   username: values.username,
-    //   password: values.password
-    // }
-    // await axios.post(`${Url.LOCAL}/auth`, user).then((res) => {
-    //   console.log("res", res)
-    //   localStorage.setItem("token", res.data.access_token)
-    //   Router.push("/")
-    // })
-
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(values.username, values.password)
-      .then(async (userCredential) => {
-        // Signed in
-        const { user } = userCredential
-        if (user) {
-          setToken(user)
-          Router.push("/")
-        }
-      })
-      .catch((error) => {
-        message.error(error.code, 3)
-      })
+  const onLoginIn = async (payload: LogIn) => {
+    dispatch(userActions.login(payload))
   }
 
   const uiConfig = {
+    callbacks: {
+      signInSuccessWithAuthResult: (authResult: any, redirectUrl: string) => {
+        console.log("signInSuccessWithAuthResult", authResult, redirectUrl)
+        Router.push("/")
+        return false
+      }
+    },
     // Popup signin flow rather than redirect flow.
     signInFlow: "popup",
     // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
@@ -73,14 +69,22 @@ export default function Login() {
     // Listen to the Firebase Auth state and set the local state.
     const unregisterAuthObserver = firebase
       .auth()
-      .onAuthStateChanged((user) => {
-        // console.log(`onAuthStateChanged`)
-        setIsSignedIn(!!user)
+      .onAuthStateChanged((user: any) => {
+        // console.log(`onAuthStateChanged`, user)
+        let userData = null
         if (user) {
+          userData = {
+            displayName: user.displayName,
+            email: user.email,
+            photoUrl: user.photoURL,
+            emailVerified: user.emailVerified,
+            uid: user.uid
+          }
           setToken(user)
         } else {
           deletToken()
         }
+        setIsSignedInUser(!!user, userData)
       })
     // Make sure we un-register Firebase observers when the component unmounts.
     return () => unregisterAuthObserver()
@@ -88,10 +92,12 @@ export default function Login() {
 
   return (
     <>
+      {/* <h1>{text}</h1> */}
       <div className={styles.container}>
         <h1>Welcom to GO-GO-GUI</h1>
         {!isSignedIn ? (
           <Form
+            className={styles.logForm}
             name="normal_login"
             initialValues={{
               remember: true
@@ -143,18 +149,10 @@ export default function Login() {
               </Button>
               Or <a href="/user/register">register now!</a>
             </Form.Item>
-            {/* fb login */}
-            {/* <FacebookLogin
-              appId="479394116407879"
-              autoLoad
-              fields="name,email,picture"
-              onClick={componentClicked}
-              callback={responseFacebook}
-            /> */}
-
             {/* fb, google login */}
             <div>
               <StyledFirebaseAuth
+                className={styles.firebaseui}
                 uiConfig={uiConfig}
                 firebaseAuth={firebase.auth()}
               />
@@ -162,11 +160,8 @@ export default function Login() {
           </Form>
         ) : (
           <div>
-            <p>
-              Welcome {firebase.auth().currentUser?.displayName}! You are now
-              signed-in!
-            </p>
-            <Button type="link" onClick={() => firebase.auth().signOut()}>
+            <p>Welcome {currentUser.displayName}! You are now signed-in!</p>
+            <Button type="link" onClick={() => dispatch({ type: "LOG_OUT" })}>
               Sign-out
             </Button>
           </div>
@@ -176,14 +171,4 @@ export default function Login() {
   )
 }
 
-// login.getInitialProps = async () => {
-//     try {
-//         const res = await axios.get('http://localhost:5000/auth');
-//         const restaurants = res.data;
-//         console.log('res', res)
-//         console.log('restaurants', restaurants)
-//         return {restaurants};
-//     } catch (error) {
-//         return {error};
-//     }
-// };
+export default Login

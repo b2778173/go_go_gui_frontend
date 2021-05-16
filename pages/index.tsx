@@ -1,9 +1,10 @@
-import Head from "next/head"
 import React, { useState, useEffect } from "react"
 import { Card, Skeleton, Table, Row, Col, Radio, Button } from "antd"
 import { ColumnsType } from "antd/es/table"
 // import { SyncOutlined } from "@ant-design/icons"
 import moment from "moment"
+import { useSelector, connect } from "react-redux"
+import { GetStaticProps, InferGetStaticPropsType } from "next"
 import styles from "../styles/Home.module.scss"
 import Footer from "../components/footer"
 // import Chart from "../components/chart/chart"
@@ -12,14 +13,26 @@ import MoverBlock from "../components/moverBlock"
 // import getData from "./api/test"
 import { marketNews, companyNews } from "../api/news"
 import getAreaChartData from "../api/chart"
-import { dayMover, quote } from "../api/stock"
+import { State } from "../store"
+import { UserState } from "../store/reducer/user"
 
-function Home() {
+function Home({
+  dowData,
+  spData,
+  nasdaqData,
+  feedNews
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  // console.log(dowData, spData, nasdaqData, feedNews)
+  // redux state
+  const { isSignedIn, currentUser } = useSelector<State, UserState>(
+    (state) => state.user
+  )
+
   const [tab, setTab] = useState("general")
   const [loading, setLoading] = useState(false)
-  const [dowData, setDow] = useState(null)
-  const [spData, setSP] = useState(null)
-  const [nasdaqData, setNasdaq] = useState(null)
+  // const [dowData, setDow] = useState(null)
+  // const [spData, setSP] = useState(null)
+  // const [nasdaqData, setNasdaq] = useState(null)
 
   const [dowBtn, setDowBtn] = useState("1Y")
   const [spBtn, setSpBtn] = useState("1Y")
@@ -37,100 +50,13 @@ function Home() {
     any
   ] = useState(undefined)
 
-  const [feedNews, setFeedNews] = useState([])
+  // const [feedNews, setFeedNews] = useState(feedNewsFromProps)
   const [forexNews, setForexNews] = useState([])
   const [cyptoNews, setCyptoNews] = useState([])
   const [mergeNews, setMergeNews] = useState([])
   const [uNews, setUNews] = useState([])
 
-  const [moverLoading, setMoverLoading] = useState(false)
-  const [moverTab, setMoverTab] = useState("gainer")
-  const [dayGainer, setGainer] = useState([])
-  const [dayLoser, setLoser] = useState([])
-  const [mostActive, setActive] = useState([])
-
-  // second arugs is empty , the useEffect just run once --> componentDidMounted
-  const today = () => {
-    return Math.round(new Date().getTime() / 1000)
-  }
-
-  const fetchMover = async (key: string) => {
-    let symbols: string[] = []
-    console.log(dayGainer, dayLoser, mostActive)
-    if (key === "gainer") {
-      symbols = dayGainer.map((e: { symbol: string }) => e.symbol)
-      const response: any = await quote(symbols)
-      dayGainer.forEach((e: any, i: number) => {
-        const target = response[i]
-        e.change = target.change
-        e.lastPrice = target.l
-      })
-    } else if (key === "loser") {
-      symbols = dayLoser.map((e: { symbol: string }) => e.symbol)
-      const response: any = await quote(symbols)
-      dayLoser.forEach((e: any, i: number) => {
-        const target = response[i]
-        e.change = target.change
-        e.lastPrice = target.l
-      })
-    } else {
-      symbols = mostActive.map((e: { symbol: string }) => e.symbol)
-      const response: any = await quote(symbols)
-      mostActive.forEach((e: any, i: number) => {
-        const target = response[i]
-        e.change = target.change
-        e.lastPrice = target.l
-      })
-    }
-  }
-
-  const twoYearBefore = () => {
-    const Y = new Date().getFullYear()
-    const M = new Date().getMonth()
-    const D = new Date().getDate()
-    return Math.round(new Date(Y - 2, M, D).getTime() / 1000)
-  }
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      const fetchApi = [
-        getAreaChartData("DJI", "D", twoYearBefore(), today()),
-        getAreaChartData("SPY", "D", twoYearBefore(), today()),
-        getAreaChartData("NDX", "D", twoYearBefore(), today()),
-        marketNews("general")
-        // dayMover(0, 5)
-      ]
-
-      const [
-        dowResponse,
-        spyResponse,
-        ndxResponse,
-        newsResponse
-      ]: // dayMoverRespose
-      any = await Promise.all(fetchApi)
-
-      // console.log(
-      //   dowResponse,
-      //   spyResponse,
-      //   ndxResponse,
-      //   newsResponse
-      //   // dayMoverRespose
-      // )
-      setDow(dowResponse)
-      setSP(spyResponse)
-      setNasdaq(ndxResponse)
-      setFeedNews(newsResponse)
-      // setMover(dayMoverRespose)
-      // const [gainer, loser, activer] = dayMoverRespose.finance.result
-      // await setGainer(gainer.quotes)
-      // await setLoser(loser.quotes)
-      // await setActive(activer.quotes)
-      setLoading(false)
-    }
-    fetchData()
-    // quote price
-    // return fetchMover(moverTab)
-  }, [])
+  useEffect(() => {}, [])
 
   const formatTime = (getTime: number): string => {
     return moment(getTime).format("YYYY-MM-DD")
@@ -175,7 +101,7 @@ function Home() {
     } else if (btn === "ALL") {
       xExtents = undefined
     }
-    console.log("xExtents=", xExtents)
+    // console.log("xExtents=", xExtents)
     if (name === "dow") {
       setDowBtn(btn)
       setDowXExtents(xExtents)
@@ -202,16 +128,13 @@ function Home() {
     const response = await Promise.all(data)
     setUNews(response[0].concat(response[1]).concat(response[2]))
   }
-  const onTabChange = async (key: any) => {
+  const onTabChange = async (key: string) => {
     setTab(key)
     setLoading(true)
     let response = null
     if (key === "forex" && !forexNews.length) {
       response = await marketNews(key)
       setForexNews(response)
-    } else if (key === "general" && !feedNews.length) {
-      response = await marketNews(key)
-      setFeedNews(response)
     } else if (key === "cypto" && !cyptoNews.length) {
       response = await marketNews(key)
       setCyptoNews(response)
@@ -224,26 +147,6 @@ function Home() {
     setLoading(false)
   }
 
-  const moverTabChange = async (key: string) => {
-    console.log("moverTabChange")
-    setMoverLoading(true)
-    setMoverTab(key)
-    await fetchMover(key)
-    setMoverLoading(false)
-  }
-  const updateMover = async () => {
-    setMoverLoading(true)
-    const dayMoverRespose = await dayMover(0, 5)
-    const [gainer, loser, activer] = dayMoverRespose.finance.result
-    setGainer(gainer.quotes)
-    setLoser(loser.quotes)
-    setActive(activer.quotes)
-
-    fetchMover(moverTab)
-    setMoverLoading(false)
-    // quote price
-    // to do
-  }
   const tabListNoTitle = [
     {
       key: "general",
@@ -335,68 +238,6 @@ function Home() {
       />
     )
   }
-  const moverTabList = [
-    {
-      key: "gainer",
-      tab: "Day Gainer"
-    },
-    {
-      key: "loser",
-      tab: "Day Loser"
-    },
-    {
-      key: "active",
-      tab: "Top Active"
-    }
-  ]
-  const moverColumns = [
-    {
-      title: "Symbol",
-      dataIndex: "symbol",
-      key: "symbol",
-      render: (text: string) => <a>{text}</a>
-    },
-    {
-      title: "Change %",
-      dataIndex: "change",
-      key: "change",
-      render: (change: number) =>
-        change && (
-          <span className={change > 0 ? styles.plusChange : styles.minusChange}>
-            {change > 0 ? "+ " : "- "}
-            {(Math.round(Math.abs(change * 100)) / 100) * 100}%
-          </span>
-        )
-    },
-    {
-      title: "Last Price",
-      dataIndex: "lastPrice",
-      key: "lastPrice"
-    }
-  ]
-  const moverContent: any = {
-    gainer: (
-      <Table
-        columns={moverColumns}
-        dataSource={dayGainer}
-        pagination={{ pageSize: 5, showSizeChanger: false }}
-      />
-    ),
-    loser: (
-      <Table
-        columns={moverColumns}
-        dataSource={dayLoser}
-        pagination={{ pageSize: 5, showSizeChanger: false }}
-      />
-    ),
-    active: (
-      <Table
-        columns={moverColumns}
-        dataSource={mostActive}
-        pagination={{ pageSize: 5, showSizeChanger: false }}
-      />
-    )
-  }
 
   const positionColumns = [
     {
@@ -421,6 +262,10 @@ function Home() {
     <div className={styles.container}>
       <main className={styles.main}>
         <>
+          <h1>
+            {isSignedIn ? "Signed in !" : ""}{" "}
+            {currentUser && currentUser.displayName}
+          </h1>
           <div className={styles.content}>
             {/* area chart */}
             <Row gutter={[16, 16]}>
@@ -506,32 +351,11 @@ function Home() {
                 <div className={styles.moverBlock}>
                   <MoverBlock dateRange="1D" />
                 </div>
-                {/* <Card
-                  tabBarExtraContent={
-                    <Button
-                      shape="circle"
-                      icon={<SyncOutlined />}
-                      onClick={updateMover}
-                    />
-                  }
-                  bodyStyle={{ padding: 12 }}
-                  style={{ marginBottom: "8px" }}
-                  tabList={moverTabList}
-                  activeTabKey={moverTab}
-                  onTabChange={(key) => {
-                    moverTabChange(key)
-                  }}>
-                  <Skeleton loading={moverLoading} avatar active>
-                    {moverContent[moverTab]}
-                  </Skeleton>
-                </Card> */}
 
                 {/* position */}
                 <Card bodyStyle={{ padding: 0 }}>
                   <Table columns={positionColumns} dataSource={[]} />
-                  <Button style={{ width: "100%" }} type="dashed">
-                    + Add Position
-                  </Button>
+                  <Button type="dashed">+ Add Position</Button>
                 </Card>
               </Col>
 
@@ -545,9 +369,35 @@ function Home() {
   )
 }
 
-export default Home
+export default connect((state) => state)(Home)
 
-// Home.getInitialProps = async () => {
-//   const response = await getData()
-//   return { data: response }
-// }
+export const getStaticProps: GetStaticProps = async () => {
+  const twoYearBefore = () => {
+    const Y = new Date().getFullYear()
+    const M = new Date().getMonth()
+    const D = new Date().getDate()
+    return Math.round(new Date(Y - 2, M, D).getTime() / 1000)
+  }
+  const today = () => {
+    return Math.round(new Date().getTime() / 1000)
+  }
+
+  // Call an external API endpoint to get posts.
+  // You can use any data fetching library
+  const fetchApi = [
+    getAreaChartData("DJI", "D", twoYearBefore(), today()),
+    getAreaChartData("SPY", "D", twoYearBefore(), today()),
+    getAreaChartData("NDX", "D", twoYearBefore(), today()),
+    marketNews("general")
+    // dayMover(0, 5)
+  ]
+  const [dowData, spData, nasdaqData, feedNews] = await Promise.all(fetchApi)
+  return {
+    props: {
+      dowData,
+      spData,
+      nasdaqData,
+      feedNews
+    }
+  }
+}

@@ -7,16 +7,21 @@ import {
   DownOutlined
 } from "@ant-design/icons"
 import React, { useState } from "react"
-import "../util/firebase"
-import firebase from "firebase/app"
-import "firebase/auth"
+
 import Link from "next/link"
 import Router from "next/router"
+import { useSelector, useDispatch } from "react-redux"
 import styles from "./styles/navbar.module.css"
 import TickerTape from "./tickerTape"
 import Watchlist from "./watchlist/watchlist"
+import userActions from "../store/action/user"
 
 function NavBar(props: { showTickerTap: boolean }) {
+  // redux state
+  const userState = useSelector((state: any) => state.user)
+  const { isSignedIn, currentUser, text } = userState
+  const dispatch = useDispatch()
+
   const { showTickerTap } = props
   const [current, changeCurrent] = useState("mail")
 
@@ -27,12 +32,15 @@ function NavBar(props: { showTickerTap: boolean }) {
   }
   const onSearch = (value: string) => {
     // console.log(value)
+    // dispatch({ type: "SET_TEXT", payload: { text: value } })
   }
 
   const logout = () => {
-    sessionStorage.removeItem("idToken")
-    firebase.auth().signOut()
-    Router.push("/user/login")
+    if (currentUser) {
+      dispatch(userActions.logout())
+    } else {
+      Router.push("/user/login")
+    }
   }
 
   // component
@@ -46,7 +54,7 @@ function NavBar(props: { showTickerTap: boolean }) {
         <Link href="/">Home</Link>
       </Menu.Item>
       <Menu.Item>
-        <Link href="/user/login">Login</Link>
+        <Link href="/user/111">11111</Link>
       </Menu.Item>
       <Menu.Item>
         <Link href="/profile">Profile</Link>
@@ -63,7 +71,7 @@ function NavBar(props: { showTickerTap: boolean }) {
         </a>
       </Menu.Item>
       <Menu.Item danger onClick={logout}>
-        Log out
+        {currentUser ? `Log out` : `Sign in`}
       </Menu.Item>
     </Menu>
   )
@@ -134,7 +142,7 @@ function NavBar(props: { showTickerTap: boolean }) {
                   icon={<UserOutlined />}
                   className={styles.avatar}
                 />
-                {firebase.auth().currentUser?.displayName} <DownOutlined />
+                {currentUser && currentUser.displayName} <DownOutlined />
               </a>
             </div>
           </Dropdown>

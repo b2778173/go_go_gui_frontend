@@ -1,0 +1,9 @@
+.firebaseui-card-content {
+  padding: 0 !important;
+}
+
+.firebaseui-idp-button {
+  min-width: 220px !important;
+  max-width: 360px !important; 
+  text-align: -webkit-center !important;
+}
