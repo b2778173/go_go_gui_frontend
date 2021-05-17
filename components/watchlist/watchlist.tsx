@@ -38,7 +38,7 @@ const Watchlist = () => {
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         width={1000}>
-        <Tabs defaultActiveKey="1" destroyInactiveTabPane={true}>
+        <Tabs defaultActiveKey="1">
           <TabPane tab="Add Symbol" key="1">
             <Space direction="vertical">
               <Row>
@@ -54,7 +54,7 @@ const Watchlist = () => {
               </Spin>
             </Space>
           </TabPane>
-          <TabPane tab="My WatchList" key="2">
+          <TabPane tab="My WatchList" key="2" destroyInactiveTabPane={true}>
             <Spin size="large" spinning={loadingTab2}>
               <MyWatchlist onSymbollistLoading={loadingTab2IconHandler}/>
             </Spin>

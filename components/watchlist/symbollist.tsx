@@ -2,12 +2,12 @@ import {Button, Table} from 'antd';
 import {useEffect, useState} from "react";
 import {getAllWatchlist, getSymbolList, addWatchlist, rmWatchlist} from "../../api/watchlist";
 import {
-    MinusCircleTwoTone, PlusCircleTwoTone
+    CloseOutlined, PlusOutlined
 } from "@ant-design/icons"
 
 const SymbolList = (props: {name: string, onSymbollistLoading: (arg0: boolean) => void;}) => {
 
-    const [symbolList, setSymbolList] = useState([{symbol:'', name:'', currency:'', stockExchange:'', exchangeShortName:''}]);
+    const [symbolList, setSymbolList] = useState([{ currency: '', description: '', displaySymbol: '', figi: '', mic: '', symbol: '', type: '' }]);
     const [watchlist, setWatchlist] = useState([{_id:'', marketCap:'', price:0}]);
 
     const insertAndDelHandler = (record: { symbol: string; }) => {
@@ -18,6 +18,22 @@ const SymbolList = (props: {name: string, onSymbollistLoading: (arg0: boolean) =
         }
     }
 
+    const sortData = (data: { currency: string, description: string, displaySymbol: string, figi: string, mic: string, symbol: string, type: string }[]) => {
+        // Call slice to create a new Array and prevent mutating it if it's stored in state
+        return data.slice().sort((a, b) => {
+            var symbolA = a.symbol.toUpperCase(); // ignore upper and lowercase
+            var symbolB = b.symbol.toUpperCase(); // ignore upper and lowercase
+            if (symbolA < symbolB) {
+                return -1;
+            }
+            if (symbolA > symbolB) {
+                return 1;
+            }
+            // names must be equal
+            return 0;
+        });
+    }
+
     const columns = [
         {
             title: "SYMBOL",
@@ -25,33 +41,28 @@ const SymbolList = (props: {name: string, onSymbollistLoading: (arg0: boolean) =
             key: "symbol"
         },
         {
-            title: "NAME",
-            dataIndex:"name",
-            key: "name"
-        },
-        {
             title: "CURRENCY",
             dataIndex:"currency",
             key: "currency"
         },
         {
-            title: "STOCK EXCHANGE",
-            dataIndex:"stockExchange",
-            key: "stockExchange"
+            title: "Description",
+            dataIndex:"description",
+            key: "description"
         },
         {
-            title: "EXCHANGE SHORTNAME",
-            dataIndex:"exchangeShortName",
-            key: "exchangeShortName"
+            title: "EXCHANGE SHORTNAME(MIC)",
+            dataIndex:"mic",
+            key: "mic"
         },
         {
             title: 'Action',
             dataIndex: '',
             key: 'x',
-            render: (text: any, record: { symbol: string, name: string, currency: string, stockExchange: string, exchangeShortName: string }) => (
-              <Button value={record.symbol} type="link"
+            render: (text: any, record: { currency: string, description: string, displaySymbol: string, figi: string, mic: string, symbol: string, type: string }) => (
+              <Button value={record.symbol} type="text"
                       icon={watchlist.some(
-                        watchItem =>  watchItem._id == record.symbol) ? <MinusCircleTwoTone style={{ fontSize: '32px' }}  twoToneColor="#52c41a" /> : <PlusCircleTwoTone style={{ fontSize: '32px' }}  twoToneColor="#eb2f96" />
+                        watchItem =>  watchItem._id == record.symbol) ? <CloseOutlined style={{ fontSize: '25px', color: '#eb2f96' }}  /> : <PlusOutlined style={{ fontSize: '25px',  color: '#52c41a' }} />
                       }
                       onClick={() => {
                           let addDelBtn = insertAndDelHandler(record);
@@ -85,7 +96,7 @@ const SymbolList = (props: {name: string, onSymbollistLoading: (arg0: boolean) =
     // retrieve open Ticker data
     useEffect(
         () => {
-            const symbolResp: any = getSymbolList();
+            const symbolResp: Promise<any> = getSymbolList();
             symbolResp.then((res: []) => {
                 let searchText = props.name;
                 let searchResult;
@@ -115,7 +126,7 @@ const SymbolList = (props: {name: string, onSymbollistLoading: (arg0: boolean) =
 
     return(
         <>
-            <Table columns={columns} dataSource={symbolList} rowKey={symbolList => symbolList.symbol}/>
+            <Table columns={columns} dataSource={sortData(symbolList)} rowKey={symbolList => symbolList.symbol}/>
         </>
 
     )

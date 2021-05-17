@@ -7,11 +7,13 @@ export function getAllWatchlist(): Promise<any> {
 
 // Add watchlist
 export function addWatchlist(req: {
-  symbol: string,
-  name: string,
   currency: string,
-  stockExchange: string,
-  exchangeShortName: string}
+  description: string,
+  displaySymbol: string,
+  figi: string,
+  mic: string,
+  symbol: string,
+  type: string }
 ): Promise<any> {
   const url = `/watchlist/addWatchlist`
   return request.post(url, req)
