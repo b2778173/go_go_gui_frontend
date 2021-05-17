@@ -33,7 +33,7 @@ const AreaChart = fitWidth(
         ratio={ratio}
         width={width}
         height={height}
-        margin={{ left: 50, right: 50, top: 10, bottom: 30 }}
+        // margin={{ left: 50, right: 50, top: 10, bottom: 30 }}
         seriesName="MSFT"
         data={data}
         type={type}
@@ -70,7 +70,7 @@ const AreaChart = fitWidth(
 AreaChart.defaultProps = {
   type: "svg",
   // width: true,
-  height: 200,
+  height: 250,
   ratio: 1,
   xExtents: undefined
 }
