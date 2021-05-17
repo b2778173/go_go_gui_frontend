@@ -67,9 +67,14 @@ request.interceptors.response.use(
 
     // show error msg with message
     if (error.message) {
-      message.error(error.message, 3)
+      // ant component
+      if (error.response.status == '400') {
+        message.error(error.response.data.message, 3);
+      } else {
+        message.error(error.message, 3);
+        return Promise.reject(error)
+      }
     }
-    return Promise.reject(error)
   }
 )
 export default request
