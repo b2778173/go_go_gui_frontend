@@ -61,23 +61,32 @@ function Home({
   const formatTime = (getTime: number): string => {
     return moment(getTime).format("YYYY-MM-DD")
   }
-  const timeShift = (type: string, offset: number): [Date, Date] => {
+  const timeShift = (data: any, type: string, offset: number): [Date, Date] => {
+    console.log(data, type, offset)
     const now = new Date(new Date().setHours(0, 0, 0, 0))
-    const nowY = now.getFullYear()
-    const nowM = now.getMonth()
-    const nowD = now.getDay()
 
-    let from: Date = now
-    const to: Date = now
+    const dateArray = data.map((d: any) => d.date)
+    const to: Date = new Date(Math.max(...dateArray))
+    const toY = to.getFullYear()
+    const toM = to.getMonth()
+    const toD = to.getDate()
+
+    let from: Date
+    if (to.getTime() < now.getTime()) {
+      from = new Date(to.setHours(0, 0, 0, 0))
+    } else {
+      from = now
+    }
+
     switch (type) {
       case "D":
-        from = new Date(nowY, nowM, nowD - offset, 0, 0, 0)
+        from = new Date(toY, toM, toD - offset, 0, 0, 0)
         break
       case "M":
-        from = new Date(nowY, nowM - offset, nowD, 0, 0, 0)
+        from = new Date(toY, toM - offset, toD, 0, 0, 0)
         break
       case "Y":
-        from = new Date(nowY - offset, nowM, nowD, 0, 0, 0)
+        from = new Date(toY - offset, toM, toD, 0, 0, 0)
         break
       default:
       // from = undefined
@@ -85,23 +94,31 @@ function Home({
     return [from, to]
   }
   const handleResolutionChange = (e: any) => {
-    // console.log(e)
+    // console.log(e.target.value)
     const btn = e.target.value
     const { name } = e.target
+    let data = null
+    if (name === "dow") {
+      data = dowData
+    } else if (name === "sp") {
+      data = spData
+    } else if (name === "ndx") {
+      data = nasdaqData
+    }
 
     let xExtents
-    if (btn === "1D") {
-      xExtents = timeShift("D", 1)
-    } else if (btn === "5D") {
-      xExtents = timeShift("D", 5)
+    if (btn === "5D") {
+      xExtents = timeShift(data, "D", 5)
     } else if (btn === "1M") {
-      xExtents = timeShift("M", 1)
+      xExtents = timeShift(data, "M", 1)
+    } else if (btn === "6M") {
+      xExtents = timeShift(data, "M", 6)
     } else if (btn === "1Y") {
-      xExtents = timeShift("Y", 1)
+      xExtents = timeShift(data, "Y", 1)
     } else if (btn === "ALL") {
       xExtents = undefined
     }
-    // console.log("xExtents=", xExtents)
+    console.log("xExtents=", xExtents)
     if (name === "dow") {
       setDowBtn(btn)
       setDowXExtents(xExtents)
@@ -270,7 +287,7 @@ function Home({
             {/* area chart */}
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Card>
+                <Card className={styles.newsCard}>
                   {dowData && (
                     <div>
                       <AreaChart data={dowData} xExtents={dowXExtents} />
@@ -279,9 +296,9 @@ function Home({
                         name="dow"
                         onChange={handleResolutionChange}
                         className={styles.resolutionBtn}>
-                        <Radio.Button value="1D">1D</Radio.Button>
                         <Radio.Button value="5D">5D</Radio.Button>
-                        <Radio.Button value="M">1M</Radio.Button>
+                        <Radio.Button value="1M">1M</Radio.Button>
+                        <Radio.Button value="6M">6M</Radio.Button>
                         <Radio.Button value="1Y">1Y</Radio.Button>
                         <Radio.Button value="ALL">ALL</Radio.Button>
                       </Radio.Group>
@@ -290,7 +307,7 @@ function Home({
                 </Card>
               </Col>
               <Col span={8}>
-                <Card>
+                <Card className={styles.newsCard}>
                   {spData && (
                     <div>
                       <AreaChart data={spData} xExtents={spXExtents} />
@@ -299,9 +316,9 @@ function Home({
                         name="sp"
                         onChange={handleResolutionChange}
                         className={styles.resolutionBtn}>
-                        <Radio.Button value="1D">1D</Radio.Button>
                         <Radio.Button value="5D">5D</Radio.Button>
-                        <Radio.Button value="M">1M</Radio.Button>
+                        <Radio.Button value="1M">1M</Radio.Button>
+                        <Radio.Button value="6M">6M</Radio.Button>
                         <Radio.Button value="1Y">1Y</Radio.Button>
                         <Radio.Button value="ALL">ALL</Radio.Button>
                       </Radio.Group>
@@ -309,7 +326,7 @@ function Home({
                   )}
                 </Card>
               </Col>
-              <Col span={8}>
+              <Col span={8} className={styles.newsCard}>
                 <Card>
                   {nasdaqData && (
                     <div>
@@ -319,9 +336,9 @@ function Home({
                         name="ndx"
                         onChange={handleResolutionChange}
                         className={styles.resolutionBtn}>
-                        <Radio.Button value="1D">1D</Radio.Button>
                         <Radio.Button value="5D">5D</Radio.Button>
-                        <Radio.Button value="M">1M</Radio.Button>
+                        <Radio.Button value="1M">1M</Radio.Button>
+                        <Radio.Button value="6M">6M</Radio.Button>
                         <Radio.Button value="1Y">1Y</Radio.Button>
                         <Radio.Button value="ALL">ALL</Radio.Button>
                       </Radio.Group>
@@ -349,7 +366,7 @@ function Home({
               <Col span={8}>
                 {/* popluar ranking */}
                 <div className={styles.moverBlock}>
-                  <MoverBlock dateRange="1D" />
+                  <MoverBlock dateRange="6M" />
                 </div>
 
                 {/* position */}
@@ -372,11 +389,11 @@ function Home({
 export default connect((state) => state)(Home)
 
 export const getStaticProps: GetStaticProps = async () => {
-  const twoYearBefore = () => {
+  const fiveYearAgo = () => {
     const Y = new Date().getFullYear()
     const M = new Date().getMonth()
     const D = new Date().getDate()
-    return Math.round(new Date(Y - 2, M, D).getTime() / 1000)
+    return Math.round(new Date(Y - 5, M, D).getTime() / 1000)
   }
   const today = () => {
     return Math.round(new Date().getTime() / 1000)
@@ -384,10 +401,11 @@ export const getStaticProps: GetStaticProps = async () => {
 
   // Call an external API endpoint to get posts.
   // You can use any data fetching library
+  // console.log(fiveYearAgo(), today())
   const fetchApi = [
-    getAreaChartData("DJI", "D", twoYearBefore(), today()),
-    getAreaChartData("SPY", "D", twoYearBefore(), today()),
-    getAreaChartData("NDX", "D", twoYearBefore(), today()),
+    getAreaChartData("DJI", "D", fiveYearAgo(), today()),
+    getAreaChartData("SPY", "D", fiveYearAgo(), today()),
+    getAreaChartData("NDX", "D", fiveYearAgo(), today()),
     marketNews("general")
     // dayMover(0, 5)
   ]
