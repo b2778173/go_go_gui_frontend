@@ -20,6 +20,7 @@ const request = axios.create({
 request.interceptors.request.use(
   async (config: any) => {
     // Do something before request is sent
+    const { isAuth } = config.headers
     const { CancelToken } = axios
     const source = CancelToken.source()
     config.cancelToken = source.token
@@ -27,7 +28,7 @@ request.interceptors.request.use(
     // const idToken = sessionStorage.getItem("idToken")
     // const token = () =>
     // new Promise((resolve, reject) => {
-    if (!isServer) {
+    if (!isServer && isAuth) {
       firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
           // User is signed in.
@@ -42,7 +43,6 @@ request.interceptors.request.use(
         }
       })
       // })
-
       config.headers.idToken = sessionStorage.getItem("idToken")
     }
     // config.headers.idToken = await token()
@@ -62,19 +62,18 @@ request.interceptors.response.use(
     return response.data.result
   },
   (error: any) => {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+    const errorRes = error.response
+    // console.log("errorRes", errorRes)
 
     // show error msg with message
-    if (error.message) {
-      // ant component
-      if (error.response.status == "400") {
-        message.error(error.response.data.message, 3)
+    if (errorRes) {
+      if (errorRes.status === 401) {
+        message.error(errorRes.statusText, 3)
       } else {
-        message.error(error.message, 3)
-        return Promise.reject(error)
+        message.error(error.response.data.message, 3)
       }
     }
+    return Promise.reject(error)
   }
 )
 export default request
