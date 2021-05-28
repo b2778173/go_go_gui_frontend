@@ -12,6 +12,8 @@ const Watchlist = () => {
   const [searchText, setSearchText] = useState("")
   const [loadingTab1, setLoadingTab1] = useState(true)
   const [loadingTab2, setLoadingTab2] = useState(true)
+  const [reRender, setReRender] = useState<boolean|null>(false)
+
 
   const symbolSearchBarChangeHandler = (
     value: React.SetStateAction<string>
@@ -27,6 +29,14 @@ const Watchlist = () => {
     setLoadingTab2(value);
   }
 
+  const onChangeTabHandler = (activeKey:string) => {
+    if (activeKey === "2") {
+      return setReRender(!reRender);
+    } else {
+      return setReRender(null);
+    }
+  }
+
   return (
     <>
       <span onClick={() => setVisible(true)}>
@@ -38,7 +48,7 @@ const Watchlist = () => {
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
         width={1000}>
-        <Tabs defaultActiveKey="1">
+        <Tabs defaultActiveKey="1" onChange={onChangeTabHandler}>
           <TabPane tab="Add Symbol" key="1">
             <Space direction="vertical">
               <Row>
@@ -54,9 +64,9 @@ const Watchlist = () => {
               </Spin>
             </Space>
           </TabPane>
-          <TabPane tab="My WatchList" key="2" destroyInactiveTabPane={true}>
+          <TabPane tab="My WatchList" key="2">
             <Spin size="large" spinning={loadingTab2}>
-              <MyWatchlist onSymbollistLoading={loadingTab2IconHandler}/>
+              <MyWatchlist onSymbollistLoading={loadingTab2IconHandler} reRender={reRender} />
             </Spin>
           </TabPane>
           <TabPane tab="Tab 3" key="3">

@@ -1,6 +1,6 @@
 import { AutoComplete } from 'antd';
 import React, {useEffect, useState} from "react";
-import {getSymbolList} from "../../api/watchlist";
+import {getSymbolList} from "../../api/stock";
 
 
 const SymbolSearchBar = (props: { onSymbolSearchBarChange: (arg0: any) => void; }) => {

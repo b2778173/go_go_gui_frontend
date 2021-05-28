@@ -2,7 +2,9 @@ import { Table } from 'antd';
 import {useEffect, useState} from "react";
 import {getAllWatchlist} from "../../api/watchlist";
 
-const MyWatchlist =  (props: {onSymbollistLoading: (arg0: boolean) => void;}) => {
+const MyWatchlist =  (props: {
+  reRender: any
+  onSymbollistLoading: (arg0: boolean) => void}) => {
 
     const [watchlist, setWatchlist] = useState([{_id:'', market_cap:'', price:0}]);
 
@@ -28,16 +30,20 @@ const MyWatchlist =  (props: {onSymbollistLoading: (arg0: boolean) => void;}) =>
 
     useEffect(
         () => {
-          const response: any = getAllWatchlist();
-          response.then((res: []) => {
-            setWatchlist(res);
-            props.onSymbollistLoading(false);
-          });
-          return () => {
-            props.onSymbollistLoading(true);
-            console.log('unmounting myWatchlist component...');
+          const apiGetAllWatchlist = () => {
+            const response: any = getAllWatchlist()
+            response.then((res: []) => {
+              props.onSymbollistLoading(false) // start spinning
+              setWatchlist(res);
+              props.onSymbollistLoading(false) // stop spinning
+            });
           }
-        }, []);
+          apiGetAllWatchlist()
+          return () => {
+            props.onSymbollistLoading(true)
+            console.log('unmounting myWatchlist component...')
+          }
+        }, [props.reRender])
 
   return(
     <>

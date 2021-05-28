@@ -9,3 +9,8 @@ export function quote(symbols: string[]): Promise<any> {
   const url = `/quote`
   return request.post(url, { symbols })
 }
+
+export function getSymbolList(): Promise<any> {
+  const url = `/stock/getSymbolList`
+  return request.get(url)
+}

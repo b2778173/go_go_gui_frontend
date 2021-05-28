@@ -1,6 +1,7 @@
 import {Button, Table} from 'antd';
 import {useEffect, useState} from "react";
-import {getAllWatchlist, getSymbolList, addWatchlist, rmWatchlist} from "../../api/watchlist";
+import {getAllWatchlist, addWatchlist, rmWatchlist} from "../../api/watchlist";
+import { getSymbolList } from "../../api/stock";
 import {
     CloseOutlined, PlusOutlined
 } from "@ant-design/icons"
