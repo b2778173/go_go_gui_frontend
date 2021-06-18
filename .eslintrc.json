@@ -55,7 +55,7 @@
         "@typescript-eslint/explicit-module-boundary-types": "warn",
         "no-param-reassign": [
           "error",
-          { "props": true, "ignorePropertyModificationsFor": ["config"] }
+          { "props": true, "ignorePropertyModificationsFor": ["config","error"] }
         ]
       }
     }

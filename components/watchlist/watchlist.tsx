@@ -19,7 +19,7 @@ const Watchlist = () => {
   return (
     <>
       <Button type="link" onClick={() => setVisible(true)}>
-        Watchlist
+        WATCHLIST
       </Button>
       <Modal
         centered

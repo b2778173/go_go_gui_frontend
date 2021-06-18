@@ -160,9 +160,23 @@ function Login() {
           </Form>
         ) : (
           <div>
-            <p>Welcome {currentUser.displayName}! You are now signed-in!</p>
+            <p>
+              Welcome{" "}
+              <span
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  color: "yellowgreen"
+                }}>
+                {currentUser.displayName}!
+              </span>{" "}
+              You are now signed-in!
+            </p>
             <Button type="link" onClick={() => dispatch({ type: "LOG_OUT" })}>
               Sign-out
+            </Button>
+            <Button type="link" onClick={() => Router.push("/")}>
+              Home
             </Button>
           </div>
         )}

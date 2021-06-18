@@ -1,11 +1,23 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from "react"
-import { Form, Input, Tooltip, Select, Row, Col, Checkbox, Button } from "antd"
+import {
+  Form,
+  Input,
+  Tooltip,
+  Select,
+  Row,
+  Col,
+  Checkbox,
+  Button,
+  message
+} from "antd"
 import { QuestionCircleOutlined } from "@ant-design/icons"
-import axios from "axios"
 import Router from "next/router"
+import firebase from "firebase/app"
 import styles from "../../styles/Home.module.scss"
-// import { Url } from "../../constant/urlConstant"
+import "firebase/auth"
+import "../../util/firebase"
+import { createProfile } from "../../api/profile"
 
 const { Option } = Select
 
@@ -33,7 +45,9 @@ const tailFormItemLayout = {
 }
 
 interface RegisterUser {
-  [key: string]: string | number
+  // [key: string]: string | number
+  email: string
+  password: string
 }
 
 export default function Register() {
@@ -41,26 +55,62 @@ export default function Register() {
 
   const onFinish = async (values: RegisterUser) => {
     console.log("Received values of form: ", values)
-    const { email } = values
-    const username =
-      typeof email === "string" ? email.slice(0, email.indexOf("@")) : null
-    const userInfo = {
-      username,
-      password: values.password,
-      name: values.name,
-      email,
-      address: values.address,
-      social_media: {
-        facebook_id: null,
-        line_id: null
-      },
-      watchlist: [
-        {
-          symbol: "msft",
-          memo: ""
+    const { email, password } = values
+    // const username =
+    //   typeof email === "string" ? email.slice(0, email.indexOf("@")) : null
+    // const userInfo = {
+    //   username,
+    //   password: values.password,
+    //   name: values.name,
+    //   email,
+    //   address: values.address,
+    //   social_media: {
+    //     facebook_id: null,
+    //     line_id: null
+    //   },
+    //   watchlist: [
+    //     {
+    //       symbol: "msft",
+    //       memo: ""
+    //     }
+    //   ]
+    // }
+
+    // add acount to firebase
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(async (userCredential) => {
+        // Signed in
+        const { user } = userCredential
+        if (user) {
+          const idToken = await user.getIdToken()
+          sessionStorage.setItem("idToken", idToken)
+          user
+            .updateProfile({
+              displayName: "go-go-gui new member"
+            })
+            .then(async () => {
+              // Update successful
+              const { uid, displayName } = user as any
+              const data = {
+                username: email,
+                name: displayName,
+                email,
+                uid
+              }
+              await createProfile(data)
+              message.success("register success", 3)
+              Router.push("/user/login")
+            })
         }
-      ]
-    }
+        // create personal profile for this account
+      })
+      .catch((error) => {
+        // const errorCode = error.code
+        const errorMessage = error.message
+        message.error(errorMessage, 3)
+      })
   }
 
   return (
@@ -124,11 +174,11 @@ export default function Register() {
         <Input.Password />
       </Form.Item>
 
-      <Form.Item
+      {/* <Form.Item
         name="name"
         label={
           <span>
-            Nickname&nbsp;
+            Name&nbsp;
             <Tooltip title="What do you want others to call you?">
               <QuestionCircleOutlined />
             </Tooltip>
@@ -142,9 +192,9 @@ export default function Register() {
           }
         ]}>
         <Input />
-      </Form.Item>
+      </Form.Item> */}
 
-      <Form.Item label="Address">
+      {/* <Form.Item label="Address">
         <Input.Group compact>
           <Form.Item
             name={["address", "city"]}
@@ -169,30 +219,7 @@ export default function Register() {
             <Input style={{ width: "50%" }} placeholder="Input street" />
           </Form.Item>
         </Input.Group>
-      </Form.Item>
-
-      <Form.Item
-        label="Captcha"
-        extra="We must make sure that your are a human.">
-        <Row gutter={8}>
-          <Col span={12}>
-            <Form.Item
-              name="captcha"
-              noStyle
-              rules={[
-                {
-                  required: false,
-                  message: "Please input the captcha you got!"
-                }
-              ]}>
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Button>Get captcha</Button>
-          </Col>
-        </Row>
-      </Form.Item>
+      </Form.Item> */}
 
       <Form.Item
         name="agreement"

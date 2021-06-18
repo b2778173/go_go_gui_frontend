@@ -66,7 +66,9 @@ function reducer(
     case "LOG_OUT":
       logout()
       return { ...state }
-
+    case "CREATE_USER":
+      // logout()
+      return { ...state }
     // case "SET_TEXT":
     //   return { ...state, text: action.payload.text }
 

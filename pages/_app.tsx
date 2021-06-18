@@ -15,6 +15,8 @@ import AppContainer from "../components/app-container"
 import NavBar from "../components/navbar"
 import { wrapper } from "../store"
 import "../styles/firebaseui-styling.global.css"
+import Footer from "../components/footer"
+// import Chart from "../components/chart/chart"
 
 function WrappedApp({ Component, pageProps }: AppProps) {
   const store: any = useStore()
@@ -49,13 +51,14 @@ function WrappedApp({ Component, pageProps }: AppProps) {
         </div>
       }>
       <Spin size="large" spinning={loading}>
-        <nav>
+        <>
           {/* <Chart /> */}
           <NavBar showTickerTap />
           <AppContainer>
             <Component {...pageProps} />
           </AppContainer>
-        </nav>
+          <Footer />
+        </>
       </Spin>
     </PersistGate>
   )

@@ -23,3 +23,11 @@ a {
   background: rgba(0, 0, 0, 0.05);
   border-radius: 4px;
 }
+
+.ant-modal-content {
+  max-height: 80vh;
+}
+.ant-modal-body {
+  max-height: 75vh;
+  overflow-y: auto;
+}

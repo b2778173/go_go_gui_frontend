@@ -6,7 +6,7 @@ import moment from "moment"
 import { useSelector, connect } from "react-redux"
 import { GetStaticProps, InferGetStaticPropsType } from "next"
 import styles from "../styles/Home.module.scss"
-import Footer from "../components/footer"
+// import Footer from "../components/footer"
 // import Chart from "../components/chart/chart"
 import AreaChart from "../components/chart/areaChart"
 import MoverBlock from "../components/moverBlock"
@@ -381,7 +381,7 @@ function Home({
           </div>
         </>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }

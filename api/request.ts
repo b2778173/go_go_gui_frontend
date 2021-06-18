@@ -1,9 +1,7 @@
 import axios from "axios"
 import { message } from "antd"
 import Router from "next/router"
-import "../util/firebase"
-import firebase from "firebase/app"
-import "firebase/auth"
+import getRefreshIdToken from "../util/auth"
 
 // import Cookies from "js-cookie"
 
@@ -29,19 +27,18 @@ request.interceptors.request.use(
     // const token = () =>
     // new Promise((resolve, reject) => {
     if (!isServer && isAuth) {
-      firebase.auth().onAuthStateChanged(async (user) => {
-        if (user) {
-          // User is signed in.
-          const idToken = await user.getIdToken()
-          sessionStorage.setItem("idToken", idToken)
-          // resolve(idToken)
-        } else {
-          // No user is signed in.
-          source.cancel()
-          Router.push("/user/login")
-          // reject()
-        }
-      })
+      try {
+        // User is signed in.
+        const idToken = await getRefreshIdToken()
+        // console.log("idToken", idToken)
+        sessionStorage.setItem("idToken", idToken)
+      } catch (error) {
+        // No user is signed in.
+        message.error(error.message, 3)
+        source.cancel()
+        Router.push("/user/login")
+      }
+
       // })
       config.headers.idToken = sessionStorage.getItem("idToken")
     }
@@ -68,10 +65,31 @@ request.interceptors.response.use(
     // show error msg with message
     if (errorRes) {
       if (errorRes.status === 401) {
+        // jwt expired , invoken getIdToken and call again
+        // if (errorRes.code === "auth/id-token-expired") {
+        //   const { CancelToken } = axios
+        //   const source = CancelToken.source()
+        //   error.config.cancelToken = source.token
+        //   firebase.auth().onAuthStateChanged(async (user) => {
+        //     console.log(!!user)
+        //     if (user) {
+        //       // User is signed in.
+        //       const idToken = await user.getIdToken()
+        //       console.log(idToken)
+        //       sessionStorage.setItem("idToken", idToken)
+        //       // resolve(idToken)
+        //     } else {
+        //       // No user is signed in.
+        //       source.cancel()
+        //       Router.push("/user/login")
+        //     }
+        //     error.config.headers.idToken = sessionStorage.getItem("idToken")
+        //   })
+        //   return request.request(error.config)
+        // }
         message.error(errorRes.statusText, 3)
-      } else {
-        message.error(error.response.data.message, 3)
       }
+      message.error(error.response.data.message, 3)
     }
     return Promise.reject(error)
   }
