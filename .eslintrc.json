@@ -45,7 +45,8 @@
     // warn rather than error
     "no-unused-vars": "warn",
     "react-hooks/exhaustive-deps": "warn",
-    "@typescript-eslint/no-unused-vars": ["warn"]
+    "@typescript-eslint/no-unused-vars": ["warn"],
+    "react/no-unused-prop-types": ["warn"]
   },
   "overrides": [
     {
@@ -55,7 +56,10 @@
         "@typescript-eslint/explicit-module-boundary-types": "warn",
         "no-param-reassign": [
           "error",
-          { "props": true, "ignorePropertyModificationsFor": ["config","error"] }
+          {
+            "props": true,
+            "ignorePropertyModificationsFor": ["config", "error"]
+          }
         ]
       }
     }

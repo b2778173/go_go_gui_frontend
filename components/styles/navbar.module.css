@@ -3,6 +3,7 @@
   float: righ; */
   margin: 5px;
 }
+.noUnderline,
 .noUnderline:hover {
   border-bottom: 2px solid transparent !important;
   color: inherit !important;

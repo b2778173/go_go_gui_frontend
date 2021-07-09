@@ -10,20 +10,26 @@ import {
   Divider,
   Tabs,
   Upload,
-  message
+  message,
+  Form,
+  Spin,
+  Card
 } from "antd"
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
-import Router from "next/router"
+// import Router from "next/router"
 
 import "firebase/auth"
 import "../../util/firebase"
 import firebase from "firebase/app"
 import { findProfileByToken, updateProfile } from "../../api/profile"
 import { uploadImage } from "../../api/image"
+import CreditialModla from "./credentialModal"
+import ChangePasswordModal from "./changePasswordModal"
+import styles from "../../styles/Userinfo.module.scss"
 
 const { Text, Title, Paragraph } = Typography
 
-const { TabPane } = Tabs
+// const { TabPane } = Tabs
 
 function getBase64(
   img: File,
@@ -47,6 +53,8 @@ function beforeUpload(file: File) {
 }
 interface IState {
   loading: boolean
+  credentialShow: boolean
+  passwordShow: boolean
   name: string
   address: {
     city: string | undefined
@@ -63,6 +71,8 @@ class ProfileImg extends React.Component<any, IState> {
     super(props)
     this.state = {
       loading: false,
+      credentialShow: false,
+      passwordShow: false,
       name: "",
       address: { city: "", country: "", zipCode: "", street: "" },
       email: "",
@@ -83,6 +93,31 @@ class ProfileImg extends React.Component<any, IState> {
     } catch {
       //
     }
+  }
+
+  // change password
+  onFinish = () => {
+    const { credentialShow } = this.state
+    this.toggleCredentialModal(!credentialShow)
+  }
+
+  // submit password fail
+  // onFinishFailed = (errorInfo: any) => {
+  //   console.log("Failed:", errorInfo)
+  // }
+
+  // open credential modal
+  toggleCredentialModal = (visible: boolean) => {
+    this.setState({
+      credentialShow: visible
+    })
+  }
+
+  // open change password modal
+  togglePasswordModal = (visible: boolean) => {
+    this.setState({
+      passwordShow: visible
+    })
   }
 
   handleChange = async (info: any) => {
@@ -128,9 +163,13 @@ class ProfileImg extends React.Component<any, IState> {
 
   save = () => {
     const { name, address, email, photoURL } = this.state
+    this.setState({
+      loading: true
+    })
     // update firebase
     const user = firebase.auth().currentUser
     if (user) {
+      // update to firebase
       user
         .updateProfile({
           displayName: name,
@@ -146,17 +185,30 @@ class ProfileImg extends React.Component<any, IState> {
             photoURL
           })
           message.success("save success")
-          Router.push("/user/login")
+          this.setState({
+            loading: false
+          })
         })
         .catch((error) => {
           // console.log(error)
           message.error(error.message)
+          this.setState({
+            loading: false
+          })
         })
     }
   }
 
   render() {
-    const { loading, name, address, email, photoURL } = this.state
+    const {
+      loading,
+      credentialShow,
+      passwordShow,
+      name,
+      address,
+      email,
+      photoURL
+    } = this.state
 
     const uploadButton = (
       <div>
@@ -166,152 +218,228 @@ class ProfileImg extends React.Component<any, IState> {
     )
     return (
       <>
-        <Row>
-          <Col span={4} />
-          <Col span={20}>
-            <Tabs defaultActiveKey="1">
-              <TabPane tab="General" key="1">
-                <Space direction="vertical">
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    beforeUpload={beforeUpload}
-                    onChange={this.handleChange}>
-                    {photoURL ? (
-                      <img
-                        src={photoURL}
-                        alt="avatar"
-                        style={{ width: "100%" }}
-                      />
-                    ) : (
-                      uploadButton
-                    )}
-                  </Upload>
-                </Space>
-                <Divider orientation="left" plain>
-                  <Title level={5}>Personal Info</Title>
-                </Divider>
-                <Space direction="vertical">
-                  <div>
-                    <Title level={5}>
-                      <Text type="secondary">Name</Text>
-                    </Title>
-                    <Space size={13}>
-                      <Paragraph> </Paragraph>
-                      <Paragraph
-                        editable={{
-                          onChange: (val: string) => {
-                            this.setState({ name: val })
-                          }
-                        }}>
-                        {name}
-                      </Paragraph>{" "}
-                    </Space>
-                  </div>
-                  <div>
-                    <Title level={5}>
-                      <Text type="secondary">Email</Text>
-                    </Title>
-                    <Space size={13}>
-                      <Paragraph> </Paragraph>
-                      <Paragraph
-                        editable={{
-                          onChange: (val: string) => {
-                            this.setState({ email: val })
-                          }
-                        }}>
-                        {email}
-                      </Paragraph>{" "}
-                    </Space>
-                  </div>
-                  <div>
-                    <Title level={5}>
-                      <Text type="secondary">Location</Text>
-                    </Title>
-
-                    <Row>
-                      <Text type="secondary">country</Text>
-                    </Row>
-                    <Row>
-                      <Select
-                        onChange={this.handleCounytyChange}
-                        placeholder="Select city"
-                        value={address.country}>
-                        <Select.Option value="US">US</Select.Option>
-                        <Select.Option value="TW">TW</Select.Option>
-                      </Select>
-                    </Row>
-
-                    <Row>
-                      <Text type="secondary">city</Text>
-                      <Input.Group compact>
-                        <Select
-                          placeholder="Select city"
-                          onChange={this.handleCityChange}
-                          value={address.city}>
-                          <Select.Option value="New York">
-                            New York
-                          </Select.Option>
-                          <Select.Option value="Winnepeg">
-                            Winnepeg
-                          </Select.Option>
-                        </Select>
-
-                        {/* <Input
-                          style={{ width: "15%" }}
-                          placeholder="zip_code"
-                        /> */}
-
-                        <Input
-                          style={{ width: "50%" }}
-                          placeholder="Input street"
-                          value={address.street}
-                          onChange={(e: any) => {
-                            const copy = JSON.parse(JSON.stringify(address))
-                            copy.street = e.target.value
-                            this.setState({ address: copy })
-                          }}
-                        />
-                      </Input.Group>
-                    </Row>
-
-                    <Row>
-                      <Text type="secondary">zipCode</Text>
-                    </Row>
-                    <Row>
-                      {address.zipCode}
+        <CreditialModla
+          visible={credentialShow}
+          setVisible={this.toggleCredentialModal}
+          setPasswordVisible={this.togglePasswordModal}
+        />
+        <ChangePasswordModal
+          initEmail={email}
+          visible={passwordShow}
+          setVisible={this.togglePasswordModal}
+        />
+        <Spin spinning={loading} size="large">
+          <Row gutter={16}>
+            <Col span={20} offset={4}>
+              <Divider orientation="left" plain>
+                {/* <Title level={5}>Personal Info</Title> */}
+              </Divider>
+              <Upload
+                name="avatar"
+                listType="picture-card"
+                className={styles.upload}
+                showUploadList={false}
+                beforeUpload={beforeUpload}
+                onChange={this.handleChange}>
+                {photoURL ? (
+                  <img
+                    src={photoURL}
+                    alt="avatar"
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                ) : (
+                  uploadButton
+                )}
+              </Upload>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={10} offset={4}>
+              <Card bordered title="Personal Info">
+                <div style={{ height: "430px", margin: "10px" }}>
+                  <Space direction="vertical">
+                    <div>
+                      <Title level={5}>
+                        <Text type="secondary">Name</Text>
+                      </Title>
                       <Space size={13}>
                         <Paragraph> </Paragraph>
                         <Paragraph
                           editable={{
                             onChange: (val: string) => {
-                              const copy = JSON.parse(JSON.stringify(address))
-                              copy.zipCode = val
-                              this.setState({ address: copy })
+                              this.setState({ name: val })
                             }
-                          }}
-                        />{" "}
+                          }}>
+                          {name}
+                        </Paragraph>{" "}
                       </Space>
-                    </Row>
-                  </div>
-                  <div>
-                    <Button type="primary" onClick={this.save}>
-                      Save Change
-                    </Button>
-                  </div>
-                </Space>
-              </TabPane>
-              <TabPane tab="Password" key="2">
-                Content of Tab Pane 2
-              </TabPane>
-              <TabPane tab="Connected Account" key="3">
-                Content of Tab Pane 3
-              </TabPane>
-            </Tabs>
-          </Col>
-        </Row>
+                    </div>
+                    <div>
+                      <Title level={5}>
+                        <Text type="secondary">Email</Text>
+                      </Title>
+                      <Space size={13}>
+                        <Paragraph> </Paragraph>
+                        <Paragraph
+                          editable={{
+                            onChange: (val: string) => {
+                              this.setState({ email: val })
+                            }
+                          }}>
+                          {email}
+                        </Paragraph>{" "}
+                      </Space>
+                    </div>
+                    <div>
+                      <Title level={5}>
+                        <Text type="secondary">Location</Text>
+                      </Title>
+
+                      <Row>
+                        <Text type="secondary">country</Text>
+                      </Row>
+                      <Row>
+                        <Select
+                          onChange={this.handleCounytyChange}
+                          placeholder="Select city"
+                          value={address.country}>
+                          <Select.Option value="US">US</Select.Option>
+                          <Select.Option value="TW">TW</Select.Option>
+                        </Select>
+                      </Row>
+
+                      <Row>
+                        <Text type="secondary">city</Text>
+                        <Input.Group compact>
+                          <Select
+                            placeholder="Select city"
+                            onChange={this.handleCityChange}
+                            value={address.city}>
+                            <Select.Option value="New York">
+                              New York
+                            </Select.Option>
+                            <Select.Option value="Winnepeg">
+                              Winnepeg
+                            </Select.Option>
+                          </Select>
+
+                          {/* <Input
+                          style={{ width: "15%" }}
+                          placeholder="zip_code"
+                        /> */}
+
+                          <Input
+                            style={{ width: "50%" }}
+                            placeholder="Input street"
+                            value={address.street}
+                            onChange={(e: any) => {
+                              const copy = JSON.parse(JSON.stringify(address))
+                              copy.street = e.target.value
+                              this.setState({ address: copy })
+                            }}
+                          />
+                        </Input.Group>
+                      </Row>
+
+                      <Row>
+                        <Text type="secondary">zipCode</Text>
+                      </Row>
+                      <Row>
+                        {address.zipCode}
+                        <Space size={13}>
+                          <Paragraph> </Paragraph>
+                          <Paragraph
+                            editable={{
+                              onChange: (val: string) => {
+                                const copy = JSON.parse(JSON.stringify(address))
+                                copy.zipCode = val
+                                this.setState({ address: copy })
+                              }
+                            }}
+                          />{" "}
+                        </Space>
+                      </Row>
+                    </div>
+                    <div>
+                      <Button type="primary" onClick={this.save}>
+                        Save Change
+                      </Button>
+                    </div>
+                  </Space>
+                </div>
+              </Card>
+            </Col>
+            <Col span={10}>
+              <Card bordered title="Private detail">
+                <div style={{ height: "430px", margin: "10px" }}>
+                  <Form
+                    name="basic"
+                    labelCol={{ span: 6 }}
+                    wrapperCol={{ span: 16 }}
+                    onFinish={this.onFinish}>
+                    {/* <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your password!"
+                          }
+                        ]}>
+                        <Input.Password />
+                      </Form.Item> */}
+
+                    {/* <Form.Item
+                        label="Confirm Password"
+                        name="password2"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please confirm your password!"
+                          },
+                          ({ getFieldValue }) => ({
+                            validator(_, value) {
+                              if (
+                                !value ||
+                                getFieldValue("password") === value
+                              ) {
+                                return Promise.resolve()
+                              }
+                              return Promise.reject(
+                                new Error(
+                                  "The two passwords that you entered do not match!"
+                                )
+                              )
+                            }
+                          })
+                        ]}>
+                        <Input.Password />
+                      </Form.Item> */}
+
+                    <Form.Item
+                      label="Password"
+                      // labelCol={{ span: 2 }}
+                      // wrapperCol={{ offset: 0, span: 16 }}
+                    >
+                      <Button type="primary" htmlType="submit">
+                        Change Password
+                      </Button>
+                    </Form.Item>
+                    <Form.Item
+                      label="Email"
+                      // labelCol={{ span: 2 }}
+                      // wrapperCol={{ offset: 0, span: 16 }}
+                    >
+                      <Button type="primary" htmlType="submit">
+                        Change Email
+                      </Button>
+                    </Form.Item>
+                  </Form>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+        </Spin>
       </>
     )
   }

@@ -69,9 +69,6 @@ function reducer(
     case "CREATE_USER":
       // logout()
       return { ...state }
-    // case "SET_TEXT":
-    //   return { ...state, text: action.payload.text }
-
     default:
       return state
   }

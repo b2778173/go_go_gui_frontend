@@ -34,9 +34,9 @@ function Home({
   // const [spData, setSP] = useState(null)
   // const [nasdaqData, setNasdaq] = useState(null)
 
-  const [dowBtn, setDowBtn] = useState("1Y")
-  const [spBtn, setSpBtn] = useState("1Y")
-  const [ndxBtn, setNdxBtn] = useState("1Y")
+  const [dowBtn, setDowBtn] = useState("ALL")
+  const [spBtn, setSpBtn] = useState("ALL")
+  const [ndxBtn, setNdxBtn] = useState("ALL")
 
   const [dowXExtents, setDowXExtents]: [
     [Date, Date] | undefined,
@@ -62,7 +62,7 @@ function Home({
     return moment(getTime).format("YYYY-MM-DD")
   }
   const timeShift = (data: any, type: string, offset: number): [Date, Date] => {
-    console.log(data, type, offset)
+    // console.log(data, type, offset)
     const now = new Date(new Date().setHours(0, 0, 0, 0))
 
     const dateArray = data.map((d: any) => d.date)
@@ -118,7 +118,7 @@ function Home({
     } else if (btn === "ALL") {
       xExtents = undefined
     }
-    console.log("xExtents=", xExtents)
+    // console.log("xExtents=", xExtents)
     if (name === "dow") {
       setDowBtn(btn)
       setDowXExtents(xExtents)
@@ -290,7 +290,11 @@ function Home({
                 <Card className={styles.newsCard}>
                   {dowData && (
                     <div>
-                      <AreaChart data={dowData} xExtents={dowXExtents} />
+                      <AreaChart
+                        index="DOW"
+                        data={dowData}
+                        xExtents={dowXExtents}
+                      />
                       <Radio.Group
                         value={dowBtn}
                         name="dow"
@@ -310,7 +314,11 @@ function Home({
                 <Card className={styles.newsCard}>
                   {spData && (
                     <div>
-                      <AreaChart data={spData} xExtents={spXExtents} />
+                      <AreaChart
+                        index="SPY"
+                        data={spData}
+                        xExtents={spXExtents}
+                      />
                       <Radio.Group
                         value={spBtn}
                         name="sp"
@@ -330,7 +338,11 @@ function Home({
                 <Card>
                   {nasdaqData && (
                     <div>
-                      <AreaChart data={nasdaqData} xExtents={nasdaqXExtents} />
+                      <AreaChart
+                        index="NDX"
+                        data={nasdaqData}
+                        xExtents={nasdaqXExtents}
+                      />
                       <Radio.Group
                         value={ndxBtn}
                         name="ndx"

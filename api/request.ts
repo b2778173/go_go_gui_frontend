@@ -65,31 +65,11 @@ request.interceptors.response.use(
     // show error msg with message
     if (errorRes) {
       if (errorRes.status === 401) {
-        // jwt expired , invoken getIdToken and call again
-        // if (errorRes.code === "auth/id-token-expired") {
-        //   const { CancelToken } = axios
-        //   const source = CancelToken.source()
-        //   error.config.cancelToken = source.token
-        //   firebase.auth().onAuthStateChanged(async (user) => {
-        //     console.log(!!user)
-        //     if (user) {
-        //       // User is signed in.
-        //       const idToken = await user.getIdToken()
-        //       console.log(idToken)
-        //       sessionStorage.setItem("idToken", idToken)
-        //       // resolve(idToken)
-        //     } else {
-        //       // No user is signed in.
-        //       source.cancel()
-        //       Router.push("/user/login")
-        //     }
-        //     error.config.headers.idToken = sessionStorage.getItem("idToken")
-        //   })
-        //   return request.request(error.config)
-        // }
-        message.error(errorRes.statusText, 3)
+        // google firebase error structure
+        message.error(error.response.data.message.message, 3)
+      } else {
+        message.error(error.response.data.message, 3)
       }
-      message.error(error.response.data.message, 3)
     }
     return Promise.reject(error)
   }

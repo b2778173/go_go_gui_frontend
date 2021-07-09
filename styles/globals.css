@@ -31,3 +31,6 @@ a {
   max-height: 75vh;
   overflow-y: auto;
 }
+.ant-upload.ant-upload-select-picture-card {
+  width: 200px;
+}
